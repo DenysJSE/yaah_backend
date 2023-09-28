@@ -1,4 +1,4 @@
-import {Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
+import {Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
 import {QuestionEntity} from "./question.entity";
 
 
@@ -14,15 +14,12 @@ export class TestEntity {
   @Column()
   description: string
 
-  @Column()
-  mark: number
-
   @Column({
     default: false
   })
   isDone: boolean
 
-  @Column()
+  @OneToMany(() => QuestionEntity, (question) => question.test)
   questions: QuestionEntity[]
 
   @CreateDateColumn()

@@ -1,37 +1,36 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { TestsService } from './tests.service';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import {TestsService} from './tests.service';
 import { CreateTestDto } from './dto/create-test.dto';
-import { UpdateTestDto } from './dto/update-test.dto';
 import {ApiTags} from "@nestjs/swagger";
+import {TestEntity} from "./entities/test.entity";
+import {QuestionEntity} from "./entities/question.entity";
+import {CreateQuestionDto} from "./dto/create-question.dto";
+import {CreateOptionDto} from "./dto/create-option.dto";
+import {OptionEntity} from "./entities/option.entity";
 
 
 @ApiTags('Tests')
 @Controller('tests')
 export class TestsController {
-  constructor(private readonly testsService: TestsService) {}
+  constructor(private readonly testService: TestsService) {}
 
   @Post()
-  create(@Body() createTestDto: CreateTestDto) {
-    return this.testsService.create(createTestDto);
+  async createTest(@Body() createTestDto: CreateTestDto): Promise<TestEntity> {
+    return this.testService.createTest(createTestDto);
   }
 
-  @Get()
-  findAll() {
-    return this.testsService.findAll();
+  @Post('questions')
+  async createQuestion(@Body() createQuestionDto: CreateQuestionDto): Promise<QuestionEntity> {
+    return this.testService.createQuestion(createQuestionDto);
+  }
+
+  @Post('options')
+  async createOption(@Body() createOptionDto: CreateOptionDto): Promise<OptionEntity> {
+    return this.testService.createOption(createOptionDto);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.testsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTestDto: UpdateTestDto) {
-    return this.testsService.update(+id, updateTestDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.testsService.remove(+id);
+  async getTestWithQuestions(@Param('id') testId: number): Promise<TestEntity> {
+    return this.testService.getTestWithQuestionsAndOptions(testId);
   }
 }
