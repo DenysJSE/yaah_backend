@@ -18,7 +18,7 @@ export class ExamController {
   @ApiResponse({status: 200, type: ExamEntity})
   @Post()
   async createTest(@Body() createTestDto: CreateExamDto): Promise<ExamEntity> {
-    return this.testService.createTest(createTestDto);
+    return this.testService.createExam(createTestDto);
   }
 
   @ApiOperation({summary: "Question Creation"})
@@ -35,10 +35,17 @@ export class ExamController {
     return this.testService.createOption(createOptionDto);
   }
 
+  @ApiOperation({summary: "Get all exams"})
+  @ApiResponse({status: 200, type: [ExamEntity]})
+  @Get()
+  async getAllExams() {
+    return this.testService.getAllExams()
+  }
+
   @ApiOperation({summary: "Get exam by ID"})
   @ApiResponse({status: 200, type: ExamEntity})
   @Get(':id')
-  async getTestWithQuestions(@Param('id') testId: number): Promise<ExamEntity> {
-    return this.testService.getTestWithQuestionsAndOptions(testId);
+  async getExamByID(@Param('id') examID: number): Promise<ExamEntity> {
+    return this.testService.getExamByID(examID);
   }
 }

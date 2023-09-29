@@ -19,9 +19,17 @@ export class ExamService {
     private readonly optionRepository: Repository<OptionEntity>,
   ) {}
 
-  async createTest(createTestDto: CreateExamDto): Promise<ExamEntity> {
-    const test = this.testRepository.create(createTestDto);
-    return await this.testRepository.save(test);
+  async createExam(CreateExamDto: CreateExamDto): Promise<ExamEntity> {
+    const existExam = await this.testRepository.findOne({
+      where: {title: CreateExamDto.title}
+    });
+
+    if (existExam) {
+      throw new BadRequestException("The exam with such title already exist!")
+    }
+
+    const exam = this.testRepository.create(CreateExamDto)
+    return await this.testRepository.save(exam);
   }
 
   async createQuestion(createQuestionDto: CreateQuestionDto): Promise<QuestionEntity> {
@@ -29,7 +37,7 @@ export class ExamService {
       where: {id: createQuestionDto.examID}
     });
     if (!exam) {
-      throw new NotFoundException('Test not found');
+      throw new NotFoundException('Exam not found');
     }
 
     const question = this.questionRepository.create({
@@ -67,14 +75,18 @@ export class ExamService {
     return await this.optionRepository.save(option);
   }
 
-  async getTestWithQuestionsAndOptions(testId: number): Promise<ExamEntity> {
-    const test = await this.testRepository.findOne({
-      where: { id: testId },
+  async getAllExams() {
+    return await this.testRepository.find({relations: ['questions', 'questions.option']})
+  }
+
+  async getExamByID(examID: number): Promise<ExamEntity> {
+    const exam = await this.testRepository.findOne({
+      where: { id: examID },
       relations: ['questions', 'questions.option']
-  });
-    if (!test) {
+    });
+    if (!exam) {
       throw new NotFoundException('Test not found');
     }
-    return test;
+    return exam;
   }
 }
