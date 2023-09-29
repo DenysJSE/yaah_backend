@@ -8,6 +8,6 @@ export class CreateQuestionDto {
   question: string
 
   @IsNotEmpty()
-  testID: number
+  examID: number
 
 }

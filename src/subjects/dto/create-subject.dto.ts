@@ -22,7 +22,7 @@ export class CreateSubjectDto {
 
   @ApiProperty({
     example: "10",
-    description: "The amount of the tests"
+    description: "The amount of the exams"
   })
   readonly testsNumber: number;
 

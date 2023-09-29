@@ -3,13 +3,13 @@ import {ApiProperty} from "@nestjs/swagger";
 export class CreateMissionDto {
 
   @ApiProperty({
-    example: "Pass 3 tests",
+    example: "Pass 3 exams",
     description: "The title of mission"
   })
   readonly title: string;
 
   @ApiProperty({
-    example: "You need to pass 3 tests to end of the day to earn award",
+    example: "You need to pass 3 exams to end of the day to earn award",
     description: "The description of mission"
   })
   readonly description: string;

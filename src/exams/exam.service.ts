@@ -1,7 +1,7 @@
 import {BadRequestException, Injectable, NotFoundException} from '@nestjs/common';
-import { CreateTestDto } from './dto/create-test.dto';
+import { CreateExamDto } from './dto/create-exam.dto';
 import {InjectRepository} from "@nestjs/typeorm";
-import {TestEntity} from "./entities/test.entity";
+import {ExamEntity} from "./entities/exam.entity";
 import {QuestionEntity} from "./entities/question.entity";
 import {OptionEntity} from "./entities/option.entity";
 import {Repository} from "typeorm";
@@ -9,32 +9,32 @@ import {CreateQuestionDto} from "./dto/create-question.dto";
 import {CreateOptionDto} from "./dto/create-option.dto";
 
 @Injectable()
-export class TestsService {
+export class ExamService {
   constructor(
-    @InjectRepository(TestEntity)
-    private readonly testRepository: Repository<TestEntity>,
+    @InjectRepository(ExamEntity)
+    private readonly testRepository: Repository<ExamEntity>,
     @InjectRepository(QuestionEntity)
     private readonly questionRepository: Repository<QuestionEntity>,
     @InjectRepository(OptionEntity)
     private readonly optionRepository: Repository<OptionEntity>,
   ) {}
 
-  async createTest(createTestDto: CreateTestDto): Promise<TestEntity> {
+  async createTest(createTestDto: CreateExamDto): Promise<ExamEntity> {
     const test = this.testRepository.create(createTestDto);
     return await this.testRepository.save(test);
   }
 
   async createQuestion(createQuestionDto: CreateQuestionDto): Promise<QuestionEntity> {
-    const test = await this.testRepository.findOne({
-      where: {id: createQuestionDto.testID}
+    const exam = await this.testRepository.findOne({
+      where: {id: createQuestionDto.examID}
     });
-    if (!test) {
+    if (!exam) {
       throw new NotFoundException('Test not found');
     }
 
     const question = this.questionRepository.create({
       ...createQuestionDto,
-      test,
+      exam,
     });
     return await this.questionRepository.save(question);
   }
@@ -67,7 +67,7 @@ export class TestsService {
     return await this.optionRepository.save(option);
   }
 
-  async getTestWithQuestionsAndOptions(testId: number): Promise<TestEntity> {
+  async getTestWithQuestionsAndOptions(testId: number): Promise<ExamEntity> {
     const test = await this.testRepository.findOne({
       where: { id: testId },
       relations: ['questions', 'questions.option']

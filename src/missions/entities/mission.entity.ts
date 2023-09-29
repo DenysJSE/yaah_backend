@@ -13,14 +13,14 @@ export class MissionEntity {
   id: number;
 
   @ApiProperty({
-    example: "Finish 3 tests",
+    example: "Finish 3 exams",
     description: "Title of the mission"
   })
   @Column()
   title: string;
 
   @ApiProperty({
-    example: "Finish to the end of the day 3 tests",
+    example: "Finish to the end of the day 3 exams",
     description: "Description of the mission"
   })
   @Column()

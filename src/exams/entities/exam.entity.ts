@@ -2,8 +2,8 @@ import {Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, Upd
 import {QuestionEntity} from "./question.entity";
 
 
-@Entity('Tests')
-export class TestEntity {
+@Entity('Exams')
+export class ExamEntity {
 
   @PrimaryGeneratedColumn()
   id: number
@@ -19,7 +19,7 @@ export class TestEntity {
   })
   isDone: boolean
 
-  @OneToMany(() => QuestionEntity, (question) => question.test)
+  @OneToMany(() => QuestionEntity, (question) => question.exam)
   questions: QuestionEntity[]
 
   @CreateDateColumn()
