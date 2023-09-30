@@ -6,7 +6,7 @@ export class CreateSubjectDto {
     example: "English Language",
     description: "The name of the subject"
   })
-  readonly name: string;
+  readonly title: string;
 
   @ApiProperty({
     example: "The most popular language in the world",
@@ -24,7 +24,7 @@ export class CreateSubjectDto {
     example: "10",
     description: "The amount of the exams"
   })
-  readonly testsNumber: number;
+  readonly examsNumber: number;
 
   @ApiProperty({
     example: "15",

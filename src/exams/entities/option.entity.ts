@@ -11,7 +11,7 @@ export class OptionEntity {
     description: "Unique ID Value"
   })
   @PrimaryGeneratedColumn()
-  id: number
+  ID: number
 
   @ApiProperty({
     example: "It is a time in English language",

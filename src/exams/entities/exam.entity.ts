@@ -1,4 +1,4 @@
-import {Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, Unique, UpdateDateColumn} from "typeorm";
+import {Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
 import {QuestionEntity} from "./question.entity";
 import {ApiProperty} from "@nestjs/swagger";
 
@@ -11,7 +11,7 @@ export class ExamEntity {
     description: "Unique ID Value"
   })
   @PrimaryGeneratedColumn()
-  id: number
+  ID: number
 
   @ApiProperty({
     example: "Past Simple",

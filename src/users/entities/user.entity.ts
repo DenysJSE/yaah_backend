@@ -16,7 +16,7 @@ export class UserEntity {
     description: "Unique ID Value"
   })
   @PrimaryGeneratedColumn()
-  id: number;
+  ID: number;
 
   @ApiProperty({
     example: "Nickname",

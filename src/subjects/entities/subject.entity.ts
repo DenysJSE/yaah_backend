@@ -43,7 +43,7 @@ export class SubjectEntity {
     description: "The amount of the exams"
   })
   @Column()
-  testsNumber: number;
+  examsNumber: number;
 
   @ApiProperty({
     example: "15",

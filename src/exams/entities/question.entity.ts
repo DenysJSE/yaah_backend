@@ -12,7 +12,7 @@ export class QuestionEntity {
     description: "Unique ID Value"
   })
   @PrimaryGeneratedColumn()
-  id: number
+  ID: number
 
   @ApiProperty({
     example: "What is Past Simple?",

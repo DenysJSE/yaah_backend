@@ -34,7 +34,7 @@ export class ExamService {
 
   async createQuestion(createQuestionDto: CreateQuestionDto): Promise<QuestionEntity> {
     const exam = await this.testRepository.findOne({
-      where: {id: createQuestionDto.examID}
+      where: {ID: createQuestionDto.examID}
     });
     if (!exam) {
       throw new NotFoundException('Exam not found');
@@ -49,7 +49,7 @@ export class ExamService {
 
   async createOption(createOptionDto: CreateOptionDto): Promise<OptionEntity> {
     const question = await this.questionRepository.findOne({
-      where: {id: createOptionDto.questionID}
+      where: {ID: createOptionDto.questionID}
     });
     if (!question) {
       throw new NotFoundException('Question not found');
@@ -81,7 +81,7 @@ export class ExamService {
 
   async getExamByID(examID: number): Promise<ExamEntity> {
     const exam = await this.testRepository.findOne({
-      where: { id: examID },
+      where: { ID: examID },
       relations: ['questions', 'questions.option']
     });
     if (!exam) {
