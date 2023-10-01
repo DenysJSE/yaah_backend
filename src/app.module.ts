@@ -16,6 +16,7 @@ import * as process from "process";
 import {ExamEntity} from "./exams/entities/exam.entity";
 import {QuestionEntity} from "./exams/entities/question.entity";
 import {OptionEntity} from "./exams/entities/option.entity";
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -45,7 +46,8 @@ import {OptionEntity} from "./exams/entities/option.entity";
     SubjectsModule,
     LessonsModule,
     ExamModule,
-    MissionsModule
+    MissionsModule,
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],

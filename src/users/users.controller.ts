@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
@@ -24,11 +24,11 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @ApiOperation({summary: "Get Users By ID"})
-  @ApiResponse({status: 200, type: [UserEntity]})
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
-  }
+  // @ApiOperation({summary: "Get Users By ID"})
+  // @ApiResponse({status: 200, type: [UserEntity]})
+  // @Get(':email')
+  // findOne(@Param('email') email: string) {
+  //   return this.usersService.findOne(email);
+  // }
 
 }

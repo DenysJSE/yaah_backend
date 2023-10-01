@@ -3,13 +3,16 @@ import { CreateUserDto } from './dto/create-user.dto';
 import {InjectRepository} from "@nestjs/typeorm";
 import {UserEntity} from "./entities/user.entity";
 import {Repository} from "typeorm";
+import * as argon from 'argon2';
+import {JwtService} from "@nestjs/jwt";
 
 @Injectable()
 export class UsersService {
 
   constructor(
     @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>
+    private readonly userRepository: Repository<UserEntity>,
+    private readonly jwtService: JwtService
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -23,7 +26,17 @@ export class UsersService {
       throw new BadRequestException("The user already exist")
     }
 
-    return await this.userRepository.save(createUserDto)
+    const user = await this.userRepository.save({
+      nickname: createUserDto.nickname,
+      email: createUserDto.email,
+      password: await argon.hash(createUserDto.password)
+    })
+
+    const token = this.jwtService.sign({email: createUserDto.email})
+
+    delete user.password
+
+    return { user, token }
   }
 
   async findAll() {
@@ -33,12 +46,15 @@ export class UsersService {
       throw new NotFoundException("The are not any users in DataBase")
     }
 
-    return users;
+    return users.map((user) => {
+      const { password, ...userWithoutPassword } = user;
+      return userWithoutPassword;
+    });
   }
 
-  async findOne(id: number) {
+  async findOne(email: string) {
     const user = await this.userRepository.findOne({
-      where: { ID: id }
+      where: { email }
     })
 
     if (!user) {
