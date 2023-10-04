@@ -20,7 +20,6 @@ import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
-    ExamModule,
     ConfigModule.forRoot({
       envFilePath: `.env`
     }),

@@ -7,9 +7,7 @@ export class CreateUserDto {
     example: "Nickname",
     description: "The nickname of the user"
   })
-  @IsNotEmpty()
-  @Length(5,20)
-  readonly nickname: string;
+  readonly nickname?: string;
 
   @ApiProperty({
     example: "email@gmail.com",

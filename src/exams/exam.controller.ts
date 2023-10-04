@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import {Controller, Get, Post, Body, Param, UseGuards} from '@nestjs/common';
 import {ExamService} from './exam.service';
 import { CreateExamDto } from './dto/create-exam.dto';
 import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
@@ -7,12 +7,15 @@ import {QuestionEntity} from "./entities/question.entity";
 import {CreateQuestionDto} from "./dto/create-question.dto";
 import {CreateOptionDto} from "./dto/create-option.dto";
 import {OptionEntity} from "./entities/option.entity";
+import {JwtAuthGuard} from "../guards/jwt-auth.guard";
 
 
 @ApiTags('Exams')
 @Controller('exams')
 export class ExamController {
-  constructor(private readonly testService: ExamService) {}
+  constructor(
+    private readonly testService: ExamService
+  ) {}
 
   @ApiOperation({summary: "Exam Creation"})
   @ApiResponse({status: 200, type: ExamEntity})
@@ -37,6 +40,7 @@ export class ExamController {
 
   @ApiOperation({summary: "Get all exams"})
   @ApiResponse({status: 200, type: [ExamEntity]})
+  @UseGuards(JwtAuthGuard)
   @Get()
   async getAllExams() {
     return this.testService.getAllExams()
@@ -44,6 +48,7 @@ export class ExamController {
 
   @ApiOperation({summary: "Get exam by ID"})
   @ApiResponse({status: 200, type: ExamEntity})
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async getExamByID(@Param('id') examID: number): Promise<ExamEntity> {
     return this.testService.getExamByID(examID);
