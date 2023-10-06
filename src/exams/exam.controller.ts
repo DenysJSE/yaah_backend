@@ -1,6 +1,6 @@
 import {Controller, Get, Post, Body, Param, UseGuards} from '@nestjs/common';
 import {ExamService} from './exam.service';
-import { CreateExamDto } from './dto/create-exam.dto';
+import {CreateExamDto} from './dto/create-exam.dto';
 import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
 import {ExamEntity} from "./entities/exam.entity";
 import {QuestionEntity} from "./entities/question.entity";
@@ -15,7 +15,8 @@ import {JwtAuthGuard} from "../guards/jwt-auth.guard";
 export class ExamController {
   constructor(
     private readonly testService: ExamService
-  ) {}
+  ) {
+  }
 
   @ApiOperation({summary: "Exam Creation"})
   @ApiResponse({status: 200, type: ExamEntity})

@@ -1,6 +1,6 @@
 import {forwardRef, Module} from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { AuthController } from './auth.controller';
+import {AuthService} from './auth.service';
+import {AuthController} from './auth.controller';
 import {JwtModule} from "@nestjs/jwt";
 import {UsersModule} from "../users/users.module";
 import * as process from "process";
@@ -20,4 +20,5 @@ import * as process from "process";
     JwtModule
   ]
 })
-export class AuthModule {}
+export class AuthModule {
+}

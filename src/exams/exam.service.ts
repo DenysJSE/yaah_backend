@@ -1,5 +1,5 @@
 import {BadRequestException, Injectable, NotFoundException} from '@nestjs/common';
-import { CreateExamDto } from './dto/create-exam.dto';
+import {CreateExamDto} from './dto/create-exam.dto';
 import {InjectRepository} from "@nestjs/typeorm";
 import {ExamEntity} from "./entities/exam.entity";
 import {QuestionEntity} from "./entities/question.entity";
@@ -17,7 +17,8 @@ export class ExamService {
     private readonly questionRepository: Repository<QuestionEntity>,
     @InjectRepository(OptionEntity)
     private readonly optionRepository: Repository<OptionEntity>,
-  ) {}
+  ) {
+  }
 
   async createExam(CreateExamDto: CreateExamDto): Promise<ExamEntity> {
     const existExam = await this.testRepository.findOne({
@@ -81,7 +82,7 @@ export class ExamService {
 
   async getExamByID(examID: number): Promise<ExamEntity> {
     const exam = await this.testRepository.findOne({
-      where: { ID: examID },
+      where: {ID: examID},
       relations: ['questions', 'questions.option']
     });
     if (!exam) {

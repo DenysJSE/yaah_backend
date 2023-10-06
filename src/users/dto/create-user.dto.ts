@@ -22,7 +22,7 @@ export class CreateUserDto {
     description: "The password of the user"
   })
   @IsNotEmpty()
-  @Length(6,20)
+  @Length(6, 20)
   readonly password: string;
 
 }

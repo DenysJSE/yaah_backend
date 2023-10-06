@@ -1,6 +1,6 @@
 import {forwardRef, Module} from '@nestjs/common';
-import { ExamService } from './exam.service';
-import { ExamController } from './exam.controller';
+import {ExamService} from './exam.service';
+import {ExamController} from './exam.controller';
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {ExamEntity} from "./entities/exam.entity";
 import {QuestionEntity} from "./entities/question.entity";
@@ -18,4 +18,5 @@ import {AuthModule} from "../auth/auth.module";
     ExamService
   ]
 })
-export class ExamModule {}
+export class ExamModule {
+}

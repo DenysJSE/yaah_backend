@@ -1,6 +1,4 @@
 import {Module} from '@nestjs/common';
-import {AppController} from './app.controller';
-import {AppService} from './app.service';
 import {ConfigModule} from "@nestjs/config";
 import {UsersModule} from './users/users.module';
 import {TypeOrmModule} from "@nestjs/typeorm";
@@ -16,7 +14,9 @@ import * as process from "process";
 import {ExamEntity} from "./exams/entities/exam.entity";
 import {QuestionEntity} from "./exams/entities/question.entity";
 import {OptionEntity} from "./exams/entities/option.entity";
-import { AuthModule } from './auth/auth.module';
+import {AuthModule} from './auth/auth.module';
+import {RolesModule} from './roles/roles.module';
+import {RoleEntity} from "./roles/entities/role.entity";
 
 @Module({
   imports: [
@@ -37,7 +37,8 @@ import { AuthModule } from './auth/auth.module';
         MissionEntity,
         ExamEntity,
         QuestionEntity,
-        OptionEntity
+        OptionEntity,
+        RoleEntity
       ],
       synchronize: true,
     }),
@@ -46,10 +47,11 @@ import { AuthModule } from './auth/auth.module';
     LessonsModule,
     ExamModule,
     MissionsModule,
-    AuthModule
+    AuthModule,
+    RolesModule
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {
 }

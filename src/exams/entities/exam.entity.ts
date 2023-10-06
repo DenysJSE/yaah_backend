@@ -1,4 +1,4 @@
-import {Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
+import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {QuestionEntity} from "./question.entity";
 import {ApiProperty} from "@nestjs/swagger";
 
@@ -43,11 +43,5 @@ export class ExamEntity {
   })
   @OneToMany(() => QuestionEntity, (question) => question.exam)
   questions: QuestionEntity[]
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 
 }

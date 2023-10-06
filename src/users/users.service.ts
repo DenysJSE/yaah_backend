@@ -1,45 +1,78 @@
-import {BadRequestException, Injectable} from '@nestjs/common';
+import {BadRequestException, HttpException, HttpStatus, Injectable} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import {InjectRepository} from "@nestjs/typeorm";
 import {UserEntity} from "./entities/user.entity";
 import {Repository} from "typeorm";
+import {RolesService} from "../roles/roles.service";
+import {AddRoleDto} from "./dto/add-role.dto";
 
 @Injectable()
 export class UsersService {
 
   constructor(
     @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>
+    private readonly userRepository: Repository<UserEntity>,
+    private roleService: RolesService
   ) {}
 
   async create(createUserDto: CreateUserDto) {
     const existUser = await this.userRepository.findOne({
       where: {
         email: createUserDto.email
-      }
+      },
+      relations: ['roles']
     })
 
     if (existUser) {
       throw new BadRequestException('The user already exist')
     }
 
-    return await this.userRepository.save(createUserDto)
+    const user = this.userRepository.create(createUserDto)
+    const role = await this.roleService.getRoleByValue("USER")
+
+    user.roles = [role]
+
+    return await this.userRepository.save(user)
   }
 
   async getAllUsers() {
-    return await this.userRepository.find()
+    return await this.userRepository.find({relations: ['roles']})
   }
 
   async getUserByEmail(email: string) {
     return await this.userRepository.findOne({
-      where: {email}
+      where: {email},
+      relations: ['roles']
     })
   }
 
   async getUserByNickname(nickname: string) {
     return await this.userRepository.findOne({
-      where: {nickname}
+      where: {nickname},
+      relations: ['roles']
     })
+  }
+
+  async addRole(addRoleDto: AddRoleDto) {
+    const user = await this.userRepository.findOne({
+      where: {id: addRoleDto.userID}
+    })
+    const role = await this.roleService.getRoleByValue(addRoleDto.value)
+
+    if (!user || !role) {
+      throw new HttpException('Пользователь или роль не найдены', HttpStatus.NOT_FOUND);
+    }
+
+    if (!user.roles) {
+      user.roles = [];
+    }
+
+    user.roles.push(role);
+
+    await this.userRepository.save(user)
+
+    return addRoleDto;
+
   }
 
 }
