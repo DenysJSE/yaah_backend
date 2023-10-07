@@ -4,7 +4,7 @@ import {IsNotEmpty, Length} from "class-validator";
 export class CreateRoleDto {
 
   @ApiProperty({
-    example: "ADMIN",
+    example: "USER",
     description: "The role of User"
   })
   @IsNotEmpty()
@@ -12,7 +12,7 @@ export class CreateRoleDto {
   readonly value: string;
 
   @ApiProperty({
-    example: "Role of user is Administrator",
+    example: "Role of user is User",
     description: "The description of user"
   })
   @IsNotEmpty()

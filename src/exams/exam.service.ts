@@ -1,4 +1,4 @@
-import {BadRequestException, Injectable, NotFoundException} from '@nestjs/common';
+import {ConflictException, Injectable, NotFoundException} from '@nestjs/common';
 import {CreateExamDto} from './dto/create-exam.dto';
 import {InjectRepository} from "@nestjs/typeorm";
 import {ExamEntity} from "./entities/exam.entity";
@@ -26,7 +26,7 @@ export class ExamService {
     });
 
     if (existExam) {
-      throw new BadRequestException("The exam with such title already exist!")
+      throw new ConflictException("The exam with such title already exist!")
     }
 
     const exam = this.testRepository.create(CreateExamDto)
@@ -37,6 +37,7 @@ export class ExamService {
     const exam = await this.testRepository.findOne({
       where: {ID: createQuestionDto.examID}
     });
+
     if (!exam) {
       throw new NotFoundException('Exam not found');
     }
@@ -65,7 +66,7 @@ export class ExamService {
       });
 
       if (existingCorrectOption) {
-        throw new BadRequestException('A correct option already exists for this question');
+        throw new ConflictException('A correct option already exists for this question');
       }
     }
 

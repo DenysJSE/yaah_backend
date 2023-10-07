@@ -1,4 +1,4 @@
-import {BadRequestException, HttpException, HttpStatus, Injectable} from '@nestjs/common';
+import {ConflictException, HttpException, HttpStatus, Injectable} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import {InjectRepository} from "@nestjs/typeorm";
 import {UserEntity} from "./entities/user.entity";
@@ -24,7 +24,7 @@ export class UsersService {
     })
 
     if (existUser) {
-      throw new BadRequestException('The user already exist')
+      throw new ConflictException('The user already exist')
     }
 
     const user = this.userRepository.create(createUserDto)
@@ -46,13 +46,6 @@ export class UsersService {
     })
   }
 
-  async getUserByNickname(nickname: string) {
-    return await this.userRepository.findOne({
-      where: {nickname},
-      relations: ['roles']
-    })
-  }
-
   async addRole(addRoleDto: AddRoleDto) {
     const user = await this.userRepository.findOne({
       where: {id: addRoleDto.userID}
@@ -60,7 +53,7 @@ export class UsersService {
     const role = await this.roleService.getRoleByValue(addRoleDto.value)
 
     if (!user || !role) {
-      throw new HttpException('Пользователь или роль не найдены', HttpStatus.NOT_FOUND);
+      throw new HttpException('User or role are not found', HttpStatus.NOT_FOUND);
     }
 
     if (!user.roles) {

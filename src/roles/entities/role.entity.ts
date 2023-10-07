@@ -19,14 +19,14 @@ export class RoleEntity {
   id: number;
 
   @ApiProperty({
-    example: "ADMIN",
+    example: "USER",
     description: "The role of user"
   })
   @Column()
   value: string;
 
   @ApiProperty({
-    example: "Role of user is Administrator",
+    example: "Role of user is User",
     description: "The description of user"
   })
   @Column()

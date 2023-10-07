@@ -20,7 +20,7 @@ export class UserEntity {
   id: number;
 
   @ApiProperty({
-    example: "Nickname",
+    example: "Denys123",
     description: "The nickname of the user"
   })
   @Column()
@@ -34,12 +34,17 @@ export class UserEntity {
   email: string;
 
   @ApiProperty({
-    example: "12345",
+    example: "123456",
     description: "The password of the user"
   })
   @Column()
   password: string;
 
+  @ApiProperty({
+    type: () => RoleEntity,
+    isArray: true,
+    description: 'Role of User'
+  })
   @ManyToMany(() => RoleEntity, {eager: true})
   @JoinTable({name: 'user_roles'})
   roles: RoleEntity[];

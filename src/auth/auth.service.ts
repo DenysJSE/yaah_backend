@@ -4,6 +4,7 @@ import {UsersService} from "../users/users.service";
 import {JwtService} from "@nestjs/jwt";
 import * as bcrypt from 'bcrypt'
 import {UserEntity} from "../users/entities/user.entity";
+import {LoginUserDto} from "../users/dto/login-user.dto";
 
 @Injectable()
 export class AuthService {
@@ -14,7 +15,7 @@ export class AuthService {
   ) {
   }
 
-  async login(userDto: CreateUserDto) {
+  async login(userDto: LoginUserDto) {
     const user = await this.validateUser(userDto)
     return this.generateToken(user)
   }
@@ -23,12 +24,10 @@ export class AuthService {
     const candidate = await this.userService.getUserByEmail(userDto.email)
 
     if (candidate) {
-      throw new HttpException("User already exist", HttpStatus.BAD_REQUEST)
+      throw new HttpException("User already exist", HttpStatus.CONFLICT)
     }
 
     const hashPassword = await bcrypt.hash(userDto.password, 5)
-
-    await this.validateNickname(userDto)
 
     const user = await this.userService.create({...userDto, password: hashPassword})
 
@@ -47,24 +46,11 @@ export class AuthService {
     }
   }
 
-  private async validateNickname(userDto: CreateUserDto) {
-    if (!userDto.nickname) {
-      throw new HttpException("Nickname is required during registration", HttpStatus.BAD_REQUEST)
+  private async validateUser(userDto: LoginUserDto) {
+    if (!userDto.email || !userDto.password) {
+      throw new BadRequestException('You missed to fill email or password!')
     }
 
-    if (userDto.nickname.length < 5) {
-      throw new HttpException("Nickname must be more than 5 character", HttpStatus.BAD_REQUEST)
-    }
-
-    const nickname = await this.userService.getUserByNickname(userDto.nickname)
-    if (nickname) {
-      throw new BadRequestException('The nickname already exist')
-    }
-
-    return nickname
-  }
-
-  private async validateUser(userDto: CreateUserDto) {
     const user = await this.userService.getUserByEmail(userDto.email)
     const passwordEquals = await bcrypt.compare(userDto.password, user.password)
 

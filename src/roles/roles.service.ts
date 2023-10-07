@@ -1,4 +1,4 @@
-import {BadRequestException, Injectable, NotFoundException} from '@nestjs/common';
+import {HttpException, HttpStatus, Injectable, NotFoundException} from '@nestjs/common';
 import {CreateRoleDto} from "./dto/create-role.dto";
 import {RoleEntity} from "./entities/role.entity";
 import {InjectRepository} from "@nestjs/typeorm";
@@ -21,7 +21,7 @@ export class RolesService {
     })
 
     if (existRole) {
-      throw new BadRequestException('The role already exist')
+      throw new HttpException({message: 'The role already exist'}, HttpStatus.CONFLICT)
     }
 
     const newRole = this.roleRepository.create({...roleDto, value: upperCaseRole});
