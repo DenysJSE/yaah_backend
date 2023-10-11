@@ -34,7 +34,7 @@ export class QuestionEntity {
     isArray: true,
     description: 'List of option related to this question'
   })
-  @OneToMany(() => OptionEntity, (option) => option.question)
+  @OneToMany(() => OptionEntity, (option) => option.question, {cascade: true})
   option: OptionEntity[]
 
 }

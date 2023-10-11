@@ -1,10 +1,20 @@
-import {ConflictException, HttpException, HttpStatus, Injectable} from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
+import {
+  ConflictException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException
+} from '@nestjs/common';
+import { RegistrationUserDto } from './dto/registration-user.dto';
 import {InjectRepository} from "@nestjs/typeorm";
 import {UserEntity} from "./entities/user.entity";
 import {Repository} from "typeorm";
 import {RolesService} from "../roles/roles.service";
 import {AddRoleDto} from "./dto/add-role.dto";
+import {UpdateUserNicknameDto} from "./dto/update-user-nickname.dto";
+import {UpdateUserPasswordDto} from "./dto/update-user-password.dto";
+import * as bcrypt from 'bcrypt'
 
 @Injectable()
 export class UsersService {
@@ -15,7 +25,7 @@ export class UsersService {
     private roleService: RolesService
   ) {}
 
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: RegistrationUserDto) {
     const existUser = await this.userRepository.findOne({
       where: {
         email: createUserDto.email
@@ -66,6 +76,59 @@ export class UsersService {
 
     return addRoleDto;
 
+  }
+
+  async updateNickname(updateUserDto: UpdateUserNicknameDto) {
+    const user = await this.userRepository.findOne({
+      where: {id: updateUserDto.userID}
+    })
+
+    if (!user) {
+      throw new NotFoundException('The user is not found!')
+    }
+
+    user.nickname = updateUserDto.newNickname
+
+    await this.userRepository.save(user)
+
+    return user
+
+  }
+
+  async updateUserPassword(updateUserPasswordDto: UpdateUserPasswordDto) {
+    const user = await this.userRepository.findOne({
+      where: {id: updateUserPasswordDto.userID}
+    })
+
+    if (!user) {
+      throw new NotFoundException('The user is not found!')
+    }
+
+    const passwordMatches = await bcrypt.compare(updateUserPasswordDto.userPassword, user.password)
+
+    if (!passwordMatches) {
+      throw new UnauthorizedException('The password is not correct!')
+    }
+
+    user.password = await bcrypt.hash(updateUserPasswordDto.newUserPassword, 5)
+
+    await this.userRepository.save(user)
+
+    return 'The password was updated successfully'
+
+  }
+
+  async deleteUser(id: number) {
+    const user = await this.userRepository.findOne({
+      where: {id}
+    })
+
+    if (!user) {
+      throw new NotFoundException('The user is not found!')
+    }
+
+    await this.userRepository.delete(id)
+    return `The user with ID: ${id} was deleted`
   }
 
 }

@@ -6,10 +6,11 @@ import {ExamEntity} from "./entities/exam.entity";
 import {QuestionEntity} from "./entities/question.entity";
 import {OptionEntity} from "./entities/option.entity";
 import {AuthModule} from "../auth/auth.module";
+import {SubjectEntity} from "../subjects/entities/subject.entity";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ExamEntity, QuestionEntity, OptionEntity]),
+    TypeOrmModule.forFeature([ExamEntity, QuestionEntity, OptionEntity, SubjectEntity]),
     forwardRef(() => AuthModule)
   ],
   controllers: [ExamController],

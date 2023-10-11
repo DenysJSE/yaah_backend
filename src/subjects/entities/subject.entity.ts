@@ -1,11 +1,10 @@
 import {
   Column,
-  CreateDateColumn,
-  Entity,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn
+  Entity, OneToMany,
+  PrimaryGeneratedColumn
 } from "typeorm";
 import {ApiProperty} from "@nestjs/swagger";
+import {ExamEntity} from "../../exams/entities/exam.entity";
 
 @Entity('Subjects')
 export class SubjectEntity {
@@ -53,17 +52,11 @@ export class SubjectEntity {
   courseDuration: number;
 
   @ApiProperty({
-    example: "23.05.23",
-    description: "Date when lesson was created"
+    type: () => ExamEntity,
+    isArray: true,
+    description: 'List of exams related to this subject'
   })
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @ApiProperty({
-    example: "25.05.23",
-    description: "Date when lesson was updated"
-  })
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @OneToMany(() => ExamEntity, (exam) => exam.subject)
+  exams: ExamEntity[];
 
 }

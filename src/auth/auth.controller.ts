@@ -1,7 +1,7 @@
 import {Controller, Post, Body} from '@nestjs/common';
 import {AuthService} from './auth.service';
 import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
-import {CreateUserDto} from "../users/dto/create-user.dto";
+import {RegistrationUserDto} from "../users/dto/registration-user.dto";
 import {UserEntity} from "../users/entities/user.entity";
 import {LoginUserDto} from "../users/dto/login-user.dto";
 
@@ -34,7 +34,7 @@ export class AuthController {
   @ApiResponse({status: 404, description: 'Role does not found'})
   @ApiResponse({status: 409, description: 'User already exist'})
   @Post('registration')
-  registration(@Body() userDto: CreateUserDto) {
+  registration(@Body() userDto: RegistrationUserDto) {
     return this.authService.registration(userDto)
   }
 

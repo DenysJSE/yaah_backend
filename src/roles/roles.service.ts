@@ -41,4 +41,35 @@ export class RolesService {
     return role
   }
 
+  async updateRole(id: number, roleDto: CreateRoleDto) {
+    const role = await this.roleRepository.findOne({
+      where: {id}
+    })
+
+    if (!role) {
+      throw new NotFoundException('The role is not found!')
+    }
+
+    role.value = roleDto.value
+    role.description = roleDto.description
+
+    await this.roleRepository.save(role)
+
+    return role
+
+  }
+
+  async delete(id: number) {
+    const role = await this.roleRepository.findOne({
+      where: {id}
+    })
+
+    if (!role) {
+      throw new NotFoundException('The role is not found!')
+    }
+
+    await this.roleRepository.delete(id)
+    return `The role with ID: ${id} was deleted!`
+  }
+
 }

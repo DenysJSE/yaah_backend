@@ -1,9 +1,7 @@
 import {
   Column,
-  CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
 } from "typeorm";
 import {ApiProperty} from "@nestjs/swagger";
 
@@ -38,19 +36,5 @@ export class LessonEntity {
   })
   @Column()
   status: string;
-
-  @ApiProperty({
-    example: "23.05.23",
-    description: "Date when lesson was created"
-  })
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @ApiProperty({
-    example: "25.05.23",
-    description: "Date when lesson was updated"
-  })
-  @UpdateDateColumn()
-  updatedAt: Date;
 
 }

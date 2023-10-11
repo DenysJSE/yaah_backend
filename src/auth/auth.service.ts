@@ -1,5 +1,5 @@
 import {BadRequestException, HttpException, HttpStatus, Injectable, UnauthorizedException} from '@nestjs/common';
-import {CreateUserDto} from "../users/dto/create-user.dto";
+import {RegistrationUserDto} from "../users/dto/registration-user.dto";
 import {UsersService} from "../users/users.service";
 import {JwtService} from "@nestjs/jwt";
 import * as bcrypt from 'bcrypt'
@@ -20,7 +20,7 @@ export class AuthService {
     return this.generateToken(user)
   }
 
-  async registration(userDto: CreateUserDto) {
+  async registration(userDto: RegistrationUserDto) {
     const candidate = await this.userService.getUserByEmail(userDto.email)
 
     if (candidate) {

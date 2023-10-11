@@ -1,4 +1,4 @@
-import {IsNotEmpty, Length} from "class-validator";
+import {IsNotEmpty, IsNumber, Length} from "class-validator";
 import {ApiProperty} from "@nestjs/swagger";
 
 export class CreateExamDto {
@@ -7,7 +7,7 @@ export class CreateExamDto {
     example: "Past Simple",
     description: "The title of exam"
   })
-  @IsNotEmpty({message: 'The exam should have a title'})
+  @IsNotEmpty()
   @Length(3, 255)
   title: string
 
@@ -15,8 +15,16 @@ export class CreateExamDto {
     example: "Past Simple is a time in English language",
     description: "The title of exam"
   })
-  @IsNotEmpty({message: 'The exam should have a description'})
+  @IsNotEmpty()
   @Length(3)
   description: string
+
+  @ApiProperty({
+    example: "1",
+    description: "The ID of subject which will contain exams"
+  })
+  @IsNumber()
+  @IsNotEmpty()
+  subjectId: number;
 
 }
