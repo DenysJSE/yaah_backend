@@ -1,4 +1,5 @@
 import {ApiProperty} from "@nestjs/swagger";
+import {IsNotEmpty, IsNumber} from "class-validator";
 
 export class CreateLessonDto {
 
@@ -15,9 +16,10 @@ export class CreateLessonDto {
   readonly lessonData: string
 
   @ApiProperty({
-    example: "Done",
-    description: "The status of lesson - Done or Not Done"
+    example: "1",
+    description: "The ID of subject which will contain lessons"
   })
-  readonly status: string
-
+  @IsNumber()
+  @IsNotEmpty()
+  subjectId: number;
 }

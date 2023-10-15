@@ -119,4 +119,13 @@ export class ExamController {
     return this.examService.deleteExam(id)
   }
 
+  @ApiOperation({summary: "Update isDone status"})
+  @ApiResponse({status: 200, description: 'The status isDone was updated!', type: [ExamEntity]})
+  @ApiResponse({status: 404, description: 'Exam was not found!'})
+  @ApiResponse({status: 409, description: 'Exam is already done!'})
+  @Put('update_is_done/:id')
+  updateIsDone(@Param('id') id: number) {
+    return this.examService.updateIsDone(id)
+  }
+
 }
