@@ -37,7 +37,7 @@ export class MissionEntity {
     example: "true",
     description: "User done or not mission - true/false"
   })
-  @Column()
+  @Column({default: false})
   isDone: boolean;
 
 }

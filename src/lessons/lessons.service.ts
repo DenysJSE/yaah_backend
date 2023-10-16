@@ -83,11 +83,11 @@ export class LessonsService {
     })
 
     if (!lesson) {
-      throw new NotFoundException('The exam is not found!')
+      throw new NotFoundException('The lesson is not found!')
     }
 
     if (lesson.isDone === true) {
-      throw new ConflictException('The exam is already DONE!')
+      throw new ConflictException('The lesson is already DONE!')
     }
 
     lesson.isDone = true
