@@ -2,11 +2,12 @@ import {
   Column,
   Entity,
   JoinTable,
-  ManyToMany,
+  ManyToMany, OneToMany,
   PrimaryGeneratedColumn
 } from "typeorm";
 import {ApiProperty} from "@nestjs/swagger";
 import {RoleEntity} from "../../roles/entities/role.entity";
+import {UserLessonEntity} from "./user-lesson.entity";
 
 
 @Entity('Users')
@@ -41,6 +42,13 @@ export class UserEntity {
   password: string;
 
   @ApiProperty({
+    example: 100,
+    description: 'The amount of user coins'
+  })
+  @Column({default: 0})
+  coins: number;
+
+  @ApiProperty({
     type: () => RoleEntity,
     isArray: true,
     description: 'Role of User'
@@ -49,11 +57,7 @@ export class UserEntity {
   @JoinTable({name: 'user_roles'})
   roles: RoleEntity[];
 
-  @ApiProperty({
-    example: 100,
-    description: 'The amount of user coins'
-  })
-  @Column({default: 0})
-  coins: number;
+  @OneToMany(() => UserLessonEntity, userLesson => userLesson.user)
+  userLessons: UserLessonEntity[];
 
 }

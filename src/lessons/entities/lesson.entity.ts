@@ -1,10 +1,11 @@
 import {
   Column,
-  Entity, JoinColumn, ManyToOne,
+  Entity, JoinColumn, ManyToOne, OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import {ApiProperty} from "@nestjs/swagger";
 import {SubjectEntity} from "../../subjects/entities/subject.entity";
+import {UserLessonEntity} from "../../users/entities/user-lesson.entity";
 
 
 @Entity('Lessons')
@@ -31,14 +32,6 @@ export class LessonEntity {
   @Column('text')
   lessonData: string;
 
-  @ApiProperty({
-    example: "Done",
-    description: "The status of lesson - Done or Not Done"
-  })
-  @Column({
-    default: false
-  })
-  isDone: boolean;
 
   @ApiProperty({
     type: () => SubjectEntity,
@@ -48,5 +41,8 @@ export class LessonEntity {
   @ManyToOne(() => SubjectEntity, (subject) => subject.lessons)
   @JoinColumn({ name: 'subjectId' })
   subject: SubjectEntity;
+
+  @OneToMany(() => UserLessonEntity, userLesson => userLesson.lesson)
+  userLessons: UserLessonEntity[];
 
 }

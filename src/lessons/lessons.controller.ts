@@ -1,10 +1,11 @@
-import {Body, Controller, Delete, Get, Param, Post, Put, UseGuards} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, Post, Put, UseGuards, Request} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
 import {LessonsService} from "./lessons.service";
 import {CreateLessonDto} from "./dto/create-lesson.dto";
 import {LessonEntity} from "./entities/lesson.entity";
 import {Roles} from "../auth/roles-auth.decorator";
 import {RolesGuard} from "../guards/roles.guard";
+import {JwtAuthGuard} from "../guards/jwt-auth.guard";
 
 
 @ApiTags('Lessons')
@@ -22,11 +23,18 @@ export class LessonsController {
     return this.lessonService.createLesson(lessonDTO)
   }
 
+  @Get('get_all')
+  getAllLessonsWithUserStatus() {
+    return this.lessonService.getAllLessonsWithUserStatus()
+  }
+
   @ApiOperation({summary: "Get All Lessons"})
   @ApiResponse({status: 200, type: [LessonEntity]})
+  @UseGuards(JwtAuthGuard)
   @Get()
-  getAllLessons() {
-    return this.lessonService.getAllLessons()
+  getAllLessons(@Request() req: any) {
+    const userId = req.user.id
+    return this.lessonService.getAllLessons(userId)
   }
 
   @ApiOperation({summary: "Update a Lesson"})
@@ -49,9 +57,11 @@ export class LessonsController {
 
   @ApiOperation({summary: "Update isDone status"})
   @ApiResponse({status: 200, description: 'The status isDone was updated!', type: [LessonEntity]})
+  @UseGuards(JwtAuthGuard)
   @Put('update_is_done/:id')
-  updateIsDone(@Param('id') id: number) {
-    return this.lessonService.updateIsDone(id)
+  updateIsDone(@Request() req: any, @Param('id') id: number) {
+    const userId = req.user.id
+    return this.lessonService.updateIsDone(userId, id)
   }
 
 }

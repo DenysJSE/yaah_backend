@@ -17,6 +17,7 @@ import {OptionEntity} from "./exams/entities/option.entity";
 import {AuthModule} from './auth/auth.module';
 import {RolesModule} from './roles/roles.module';
 import {RoleEntity} from "./roles/entities/role.entity";
+import {UserLessonEntity} from "./users/entities/user-lesson.entity";
 
 @Module({
   imports: [
@@ -38,7 +39,8 @@ import {RoleEntity} from "./roles/entities/role.entity";
         ExamEntity,
         QuestionEntity,
         OptionEntity,
-        RoleEntity
+        RoleEntity,
+        UserLessonEntity
       ],
       synchronize: true,
     }),

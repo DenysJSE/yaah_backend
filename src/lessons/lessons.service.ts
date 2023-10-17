@@ -4,6 +4,8 @@ import {LessonEntity} from "./entities/lesson.entity";
 import {Repository} from "typeorm";
 import {CreateLessonDto} from "./dto/create-lesson.dto";
 import {SubjectEntity} from "../subjects/entities/subject.entity";
+import {UserEntity} from "../users/entities/user.entity";
+import {UserLessonEntity} from "../users/entities/user-lesson.entity";
 
 @Injectable()
 export class LessonsService {
@@ -12,7 +14,11 @@ export class LessonsService {
     @InjectRepository(LessonEntity)
     private readonly lessonRepository: Repository<LessonEntity>,
     @InjectRepository(SubjectEntity)
-    private readonly subjectRepository: Repository<SubjectEntity>
+    private readonly subjectRepository: Repository<SubjectEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(UserLessonEntity)
+    private readonly userLessonRepository: Repository<UserLessonEntity>
   ) {}
 
   async createLesson(lessonDTO: CreateLessonDto) {
@@ -35,15 +41,50 @@ export class LessonsService {
     const lesson = this.lessonRepository.create({
       ...lessonDTO,
       subject
-    })
+    });
 
-    await this.lessonRepository.save(lesson)
+    const savedLesson = await this.lessonRepository.save(lesson);
 
-    return lesson
+    const users = await this.userRepository.find();
+
+    const userLessons = users.map(user => ({
+      user,
+      lesson: savedLesson,
+      isDone: false,
+    }));
+
+    await this.userLessonRepository.insert(userLessons);
+
+    return savedLesson;
   }
 
-  async getAllLessons() {
-    return this.lessonRepository.find({relations: ['subject']})
+  async getAllLessonsWithUserStatus() {
+    const lessons = await this.lessonRepository.find({
+      relations: ['userLessons', 'userLessons.user']
+    });
+
+    return lessons.map(lesson => ({
+      id: lesson.id,
+      title: lesson.title,
+      lessonData: lesson.lessonData,
+      userStatus: lesson.userLessons.map(userLesson => ({
+        userId: userLesson.user,
+        isDone: userLesson.isDone,
+      })),
+    }));
+  }
+
+  async getAllLessons(userId: number) {
+    const user = await this.userRepository.findOne({
+      where: {id: userId},
+      relations: ['userLessons', 'userLessons.lesson'],
+    });
+
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    return user.userLessons
   }
 
   async updateLesson(id: number, lessonDTO: CreateLessonDto) {
@@ -77,24 +118,29 @@ export class LessonsService {
     return `The subject with ID: ${id} was deleted`
   }
 
-  async updateIsDone(id: number) {
+  async updateIsDone(userId: number, lessonId: number) {
+    const user = await this.userRepository.findOne({
+      where: {id: userId}
+    });
+
     const lesson = await this.lessonRepository.findOne({
-      where: {id}
-    })
+      where: {id: lessonId}
+    });
 
-    if (!lesson) {
-      throw new BadRequestException('The lesson is not found!')
+    if (!user && !lesson) {
+      throw new BadRequestException('User or Lesson not found');
     }
 
-    if (lesson.isDone === true) {
-      throw new BadRequestException('The lesson is already DONE!')
+    const userLesson = await this.userLessonRepository.findOne({
+      where: { user, lesson },
+    });
+
+    if (!userLesson) {
+      throw new BadRequestException('UserLesson not found');
     }
 
-    lesson.isDone = true
-
-    await this.lessonRepository.save(lesson)
-
-    return 'The status was updated'
+    userLesson.isDone = true;
+    return this.userLessonRepository.save(userLesson);
   }
 
 }
