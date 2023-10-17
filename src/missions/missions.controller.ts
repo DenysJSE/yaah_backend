@@ -61,4 +61,11 @@ export class MissionsController {
     return this.missionService.setAward(id, award)
   }
 
+  @ApiOperation({summary: "Set Award From Mission"})
+  @ApiResponse({status: 200, description: 'You get 100 coins from mission'})
+  @Put('set_award/:id')
+  updateIsDone(@Param('id') id: number) {
+    return this.missionService.updateIsDone(id)
+  }
+
 }

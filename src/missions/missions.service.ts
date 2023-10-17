@@ -92,4 +92,24 @@ export class MissionsService {
     return user
   }
 
+  async updateIsDone(id: number) {
+    const mission = await this.missionRepository.findOne({
+      where: {id}
+    })
+
+    if (!mission) {
+      throw new BadRequestException('The mission is not found!')
+    }
+
+    if (mission.isDone === true) {
+      throw new BadRequestException('The mission is already DONE!')
+    }
+
+    mission.isDone = true
+
+    await this.missionRepository.save(mission)
+
+    return 'The status was updated'
+  }
+
 }
