@@ -58,6 +58,8 @@ export class UsersController {
 
   @ApiOperation({summary: "Delete User"})
   @ApiResponse({status: 200, description: 'User was deleted successfully'})
+  @Roles("ADMIN")
+  @UseGuards(RolesGuard)
   @Delete(':id')
   deleteUser(@Param('id') id: number) {
     return this.usersService.deleteUser(id)
