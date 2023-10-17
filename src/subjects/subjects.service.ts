@@ -1,4 +1,4 @@
-import {ConflictException, Injectable, NotFoundException} from '@nestjs/common';
+import {BadRequestException, Injectable} from '@nestjs/common';
 import {SubjectEntity} from "./entities/subject.entity";
 import {Repository} from "typeorm";
 import {InjectRepository} from "@nestjs/typeorm";
@@ -18,7 +18,7 @@ export class SubjectsService {
     })
 
     if (existSubject) {
-      throw new ConflictException('The subject with such title already exist!')
+      throw new BadRequestException('The subject with such title already exist!')
     }
 
     const subject = this.subjectRepository.create(subjectDto)
@@ -41,7 +41,7 @@ export class SubjectsService {
     })
 
     if (!subject) {
-      throw new NotFoundException('The subject is not found!')
+      throw new BadRequestException('The subject is not found!')
     }
 
     subject.title = subjectDto.title;
@@ -61,7 +61,7 @@ export class SubjectsService {
     })
 
     if (!subject) {
-      throw new NotFoundException('The subject is not found!')
+      throw new BadRequestException('The subject is not found!')
     }
 
     await this.subjectRepository.delete(id)

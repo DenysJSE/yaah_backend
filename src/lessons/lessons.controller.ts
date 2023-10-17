@@ -1,8 +1,10 @@
-import {Body, Controller, Delete, Get, Param, Post, Put} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, Post, Put, UseGuards} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
 import {LessonsService} from "./lessons.service";
 import {CreateLessonDto} from "./dto/create-lesson.dto";
 import {LessonEntity} from "./entities/lesson.entity";
+import {Roles} from "../auth/roles-auth.decorator";
+import {RolesGuard} from "../guards/roles.guard";
 
 
 @ApiTags('Lessons')
@@ -13,13 +15,8 @@ export class LessonsController {
 
   @ApiOperation({summary: "Create a Lesson"})
   @ApiResponse({status: 201, type: [LessonEntity]})
-  @ApiResponse({status: 400, description:
-      'User does not enter title value or length of title value is less than 3 character. ' +
-      'User does not enter lesson data or length of lesson data is less than 3 character. ' +
-      'User does not enter subject ID or user enter not a number.'
-  })
-  @ApiResponse({status: 404, description: 'The subject was not found'})
-  @ApiResponse({status: 409, description: 'The lesson already exist'})
+  @Roles("ADMIN")
+  @UseGuards(RolesGuard)
   @Post()
   createLesson(@Body() lessonDTO: CreateLessonDto) {
     return this.lessonService.createLesson(lessonDTO)
@@ -34,12 +31,8 @@ export class LessonsController {
 
   @ApiOperation({summary: "Update a Lesson"})
   @ApiResponse({status: 201, type: [LessonEntity]})
-  @ApiResponse({status: 400, description:
-      'User does not enter title value or length of title value is less than 3 character. ' +
-      'User does not enter lesson data or length of lesson data is less than 3 character. ' +
-      'User does not enter subject ID or user enter not a number.'
-  })
-  @ApiResponse({status: 404, description: 'The lesson is not found'})
+  @Roles("ADMIN")
+  @UseGuards(RolesGuard)
   @Put('update_lesson/:id')
   updateLesson(@Param('id') id: number, @Body() lessonDTO: CreateLessonDto) {
     return this.lessonService.updateLesson(id, lessonDTO)
@@ -47,7 +40,8 @@ export class LessonsController {
 
   @ApiOperation({summary: "Delete a Lesson"})
   @ApiResponse({status: 200, description: 'The lesson is deleted successfully'})
-  @ApiResponse({status: 404, description: 'The lesson is not found'})
+  @Roles("ADMIN")
+  @UseGuards(RolesGuard)
   @Delete(':id')
   deleteLesson(@Param('id') id: number) {
     return this.lessonService.deleteLesson(id)
@@ -55,8 +49,6 @@ export class LessonsController {
 
   @ApiOperation({summary: "Update isDone status"})
   @ApiResponse({status: 200, description: 'The status isDone was updated!', type: [LessonEntity]})
-  @ApiResponse({status: 404, description: 'Lesson was not found!'})
-  @ApiResponse({status: 409, description: 'Lesson is already done!'})
   @Put('update_is_done/:id')
   updateIsDone(@Param('id') id: number) {
     return this.lessonService.updateIsDone(id)

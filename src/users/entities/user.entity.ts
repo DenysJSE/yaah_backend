@@ -49,4 +49,11 @@ export class UserEntity {
   @JoinTable({name: 'user_roles'})
   roles: RoleEntity[];
 
+  @ApiProperty({
+    example: 100,
+    description: 'The amount of user coins'
+  })
+  @Column({default: 0})
+  coins: number;
+
 }

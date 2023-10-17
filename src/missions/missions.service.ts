@@ -1,15 +1,18 @@
-import {BadRequestException, ConflictException, Injectable} from '@nestjs/common';
+import {BadRequestException, Injectable} from '@nestjs/common';
 import {InjectRepository} from "@nestjs/typeorm";
 import {MissionEntity} from "./entities/mission.entity";
 import {Repository} from "typeorm";
 import {CreateMissionDto} from "./dto/create-mission.dto";
+import {UserEntity} from "../users/entities/user.entity";
 
 @Injectable()
 export class MissionsService {
 
   constructor(
     @InjectRepository(MissionEntity)
-    private readonly missionRepository: Repository<MissionEntity>
+    private readonly missionRepository: Repository<MissionEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>
   ) {}
 
   async createMission(missionDTO: CreateMissionDto) {
@@ -18,7 +21,7 @@ export class MissionsService {
     })
 
     if (existMission) {
-      throw new ConflictException('The mission already exist!')
+      throw new BadRequestException('The mission already exist!')
     }
 
     const mission = this.missionRepository.create(missionDTO)
@@ -71,6 +74,22 @@ export class MissionsService {
     await this.missionRepository.delete(mission)
 
     return 'The mission was deleted successful!'
+  }
+
+  async setAward(userID: number, awardAmount: number) {
+    const user = await this.userRepository.findOne({
+      where: {id: userID}
+    })
+
+    if (!user) {
+      throw new BadRequestException('The user was not found!')
+    }
+
+    user.coins += Number(awardAmount)
+
+    await this.userRepository.save(user)
+
+    return user
   }
 
 }

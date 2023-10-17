@@ -1,8 +1,10 @@
-import {Body, Controller, Delete, Get, Param, Post, Put} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, Post, Put, UseGuards} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
 import {SubjectsService} from "./subjects.service";
 import {SubjectDto} from "./dto/subject.dto";
 import {SubjectEntity} from "./entities/subject.entity";
+import {Roles} from "../auth/roles-auth.decorator";
+import {RolesGuard} from "../guards/roles.guard";
 
 
 @ApiTags('Subjects')
@@ -14,14 +16,8 @@ export class SubjectsController {
 
   @ApiOperation({summary: "Create a Subject"})
   @ApiResponse({status: 201, type: [SubjectEntity]})
-  @ApiResponse({status: 400, description:
-      'User does not enter title value or length of title value is less than 3 character. ' +
-      'User does not enter description or length of description is less than 3 character. ' +
-      'User does not enter lesson number or user enter not a number. ' +
-      'User does not enter test number or user enter not a number. ' +
-      'User does not enter course duration or user enter not a number. '
-  })
-  @ApiResponse({status: 409, description: 'The subject already exist'})
+  @Roles("ADMIN")
+  @UseGuards(RolesGuard)
   @Post()
   createSubject(@Body() subjectDto: SubjectDto) {
     return this.subjectService.createSubject(subjectDto)
@@ -36,7 +32,6 @@ export class SubjectsController {
 
   @ApiOperation({summary: "Get Subject By ID"})
   @ApiResponse({status: 200, type: [SubjectEntity]})
-  @ApiResponse({status: 404, description: 'The subject is not found'})
   @Get('/:id')
   getSubjectById(@Param('id') id: number) {
     return this.subjectService.getSubjectById(id)
@@ -44,14 +39,8 @@ export class SubjectsController {
 
   @ApiOperation({summary: "Update a Subject"})
   @ApiResponse({status: 201, type: [SubjectEntity]})
-  @ApiResponse({status: 400, description:
-      'User does not enter title value or length of title value is less than 3 character. ' +
-      'User does not enter description or length of description is less than 3 character. ' +
-      'User does not enter lesson number or user enter not a number. ' +
-      'User does not enter test number or user enter not a number. ' +
-      'User does not enter course duration or user enter not a number. '
-  })
-  @ApiResponse({status: 404, description: 'The subject is not found'})
+  @Roles("ADMIN")
+  @UseGuards(RolesGuard)
   @Put(':id')
   updateSubject(@Param('id') id: number, @Body() subjectDto: SubjectDto) {
     return this.subjectService.updateSubject(id, subjectDto)
@@ -59,7 +48,8 @@ export class SubjectsController {
 
   @ApiOperation({summary: "Delete a Subject"})
   @ApiResponse({status: 200, description: 'The subject is deleted successfully'})
-  @ApiResponse({status: 404, description: 'The subject is not found'})
+  @Roles("ADMIN")
+  @UseGuards(RolesGuard)
   @Delete(':id')
   deleteSubject(@Param('id') id: number) {
     return this.subjectService.deleteSubject(id)

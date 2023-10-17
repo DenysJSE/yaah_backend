@@ -1,4 +1,4 @@
-import {ConflictException, Injectable, NotFoundException} from '@nestjs/common';
+import {BadRequestException, Injectable} from '@nestjs/common';
 import {CreateExamDto} from './dto/create-exam.dto';
 import {InjectRepository} from "@nestjs/typeorm";
 import {ExamEntity} from "./entities/exam.entity";
@@ -30,7 +30,7 @@ export class ExamService {
     });
 
     if (!subject) {
-      throw new NotFoundException('Subject not found');
+      throw new BadRequestException('Subject not found');
     }
 
     const existExam = await this.examRepository.findOne({
@@ -38,7 +38,7 @@ export class ExamService {
     });
 
     if (existExam) {
-      throw new ConflictException('An exam with such title already exists for this subject!');
+      throw new BadRequestException('An exam with such title already exists for this subject!');
     }
 
     const exam = this.examRepository.create({
@@ -56,7 +56,7 @@ export class ExamService {
     });
 
     if (!exam) {
-      throw new NotFoundException('Exam not found');
+      throw new BadRequestException('Exam not found');
     }
 
     const question = this.questionRepository.create({
@@ -72,7 +72,7 @@ export class ExamService {
       where: {ID: createOptionDto.questionID}
     });
     if (!question) {
-      throw new NotFoundException('Question not found');
+      throw new BadRequestException('Question not found');
     }
 
     if (createOptionDto.isCorrect) {
@@ -84,7 +84,7 @@ export class ExamService {
       });
 
       if (existingCorrectOption) {
-        throw new ConflictException('A correct option already exists for this question');
+        throw new BadRequestException('A correct option already exists for this question');
       }
     }
 
@@ -107,7 +107,7 @@ export class ExamService {
       relations: ['questions', 'questions.option']
     });
     if (!exam) {
-      throw new NotFoundException('Test not found');
+      throw new BadRequestException('Test not found');
     }
     return exam;
   }
@@ -119,7 +119,7 @@ export class ExamService {
     })
 
     if (!exam) {
-      throw new NotFoundException('The exam is not found!')
+      throw new BadRequestException('The exam is not found!')
     }
 
     exam.title = examDto.title
@@ -138,7 +138,7 @@ export class ExamService {
     })
 
     if (!question) {
-      throw new NotFoundException('The question is not found!')
+      throw new BadRequestException('The question is not found!')
     }
 
     question.question = questionDto.question
@@ -156,7 +156,7 @@ export class ExamService {
     })
 
     if (!option) {
-      throw new NotFoundException('The option is not found!')
+      throw new BadRequestException('The option is not found!')
     }
 
     option.text = optionDto.text
@@ -176,7 +176,7 @@ export class ExamService {
     });
 
     if (!exam) {
-      throw new NotFoundException('Exam not found');
+      throw new BadRequestException('Exam not found');
     }
 
     const questions = exam.questions;
@@ -195,11 +195,11 @@ export class ExamService {
     })
 
     if (!exam) {
-      throw new NotFoundException('The exam is not found!')
+      throw new BadRequestException('The exam is not found!')
     }
 
     if (exam.isDone === true) {
-      throw new ConflictException('The exam is already DONE!')
+      throw new BadRequestException('The exam is already DONE!')
     }
 
     exam.isDone = true

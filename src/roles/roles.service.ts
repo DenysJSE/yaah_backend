@@ -1,4 +1,4 @@
-import {HttpException, HttpStatus, Injectable, NotFoundException} from '@nestjs/common';
+import {BadRequestException, Injectable} from '@nestjs/common';
 import {CreateRoleDto} from "./dto/create-role.dto";
 import {RoleEntity} from "./entities/role.entity";
 import {InjectRepository} from "@nestjs/typeorm";
@@ -21,7 +21,7 @@ export class RolesService {
     })
 
     if (existRole) {
-      throw new HttpException({message: 'The role already exist'}, HttpStatus.CONFLICT)
+      throw new BadRequestException('The role already exist')
     }
 
     const newRole = this.roleRepository.create({...roleDto, value: upperCaseRole});
@@ -35,7 +35,7 @@ export class RolesService {
     })
 
     if (!role) {
-      throw new NotFoundException('The role is not found!')
+      throw new BadRequestException('The role is not found!')
     }
 
     return role
@@ -47,7 +47,7 @@ export class RolesService {
     })
 
     if (!role) {
-      throw new NotFoundException('The role is not found!')
+      throw new BadRequestException('The role is not found!')
     }
 
     role.value = roleDto.value
@@ -65,7 +65,7 @@ export class RolesService {
     })
 
     if (!role) {
-      throw new NotFoundException('The role is not found!')
+      throw new BadRequestException('The role is not found!')
     }
 
     await this.roleRepository.delete(id)

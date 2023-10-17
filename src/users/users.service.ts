@@ -1,11 +1,4 @@
-import {
-  ConflictException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-  UnauthorizedException
-} from '@nestjs/common';
+import {BadRequestException, Injectable, UnauthorizedException} from '@nestjs/common';
 import { RegistrationUserDto } from './dto/registration-user.dto';
 import {InjectRepository} from "@nestjs/typeorm";
 import {UserEntity} from "./entities/user.entity";
@@ -34,7 +27,7 @@ export class UsersService {
     })
 
     if (existUser) {
-      throw new ConflictException('The user already exist')
+      throw new BadRequestException('The user already exist')
     }
 
     const user = this.userRepository.create(createUserDto)
@@ -63,7 +56,7 @@ export class UsersService {
     const role = await this.roleService.getRoleByValue(addRoleDto.value)
 
     if (!user || !role) {
-      throw new HttpException('User or role are not found', HttpStatus.NOT_FOUND);
+      throw new BadRequestException('User or role are not found');
     }
 
     if (!user.roles) {
@@ -84,7 +77,7 @@ export class UsersService {
     })
 
     if (!user) {
-      throw new NotFoundException('The user is not found!')
+      throw new BadRequestException('The user is not found!')
     }
 
     user.nickname = updateUserDto.newNickname
@@ -101,7 +94,7 @@ export class UsersService {
     })
 
     if (!user) {
-      throw new NotFoundException('The user is not found!')
+      throw new BadRequestException('The user is not found!')
     }
 
     const passwordMatches = await bcrypt.compare(updateUserPasswordDto.userPassword, user.password)
@@ -124,7 +117,7 @@ export class UsersService {
     })
 
     if (!user) {
-      throw new NotFoundException('The user is not found!')
+      throw new BadRequestException('The user is not found!')
     }
 
     await this.userRepository.delete(id)

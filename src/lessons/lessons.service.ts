@@ -1,4 +1,4 @@
-import {ConflictException, Injectable, NotFoundException} from '@nestjs/common';
+import {BadRequestException, Injectable} from '@nestjs/common';
 import {InjectRepository} from "@nestjs/typeorm";
 import {LessonEntity} from "./entities/lesson.entity";
 import {Repository} from "typeorm";
@@ -21,7 +21,7 @@ export class LessonsService {
     });
 
     if (!subject) {
-      throw new NotFoundException('Subject not found');
+      throw new BadRequestException('Subject not found');
     }
 
     const existLesson = await this.lessonRepository.findOne({
@@ -29,7 +29,7 @@ export class LessonsService {
     })
 
     if (existLesson) {
-      throw new ConflictException('The lesson with such title already exist!')
+      throw new BadRequestException('The lesson with such title already exist!')
     }
 
     const lesson = this.lessonRepository.create({
@@ -52,7 +52,7 @@ export class LessonsService {
     })
 
     if (!lesson) {
-      throw new NotFoundException('The lesson is not found!')
+      throw new BadRequestException('The lesson is not found!')
     }
 
     lesson.title = lessonDTO.title
@@ -69,7 +69,7 @@ export class LessonsService {
     })
 
     if (!lesson) {
-      throw new NotFoundException('The subject is not found!')
+      throw new BadRequestException('The subject is not found!')
     }
 
     await this.lessonRepository.delete(id)
@@ -83,11 +83,11 @@ export class LessonsService {
     })
 
     if (!lesson) {
-      throw new NotFoundException('The lesson is not found!')
+      throw new BadRequestException('The lesson is not found!')
     }
 
     if (lesson.isDone === true) {
-      throw new ConflictException('The lesson is already DONE!')
+      throw new BadRequestException('The lesson is already DONE!')
     }
 
     lesson.isDone = true
