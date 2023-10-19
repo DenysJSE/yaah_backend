@@ -1,5 +1,6 @@
-import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {ApiProperty} from "@nestjs/swagger";
+import {UserMissionEntity} from "../../users/entities/user-mission.entity";
 
 
 @Entity('Missions')
@@ -33,11 +34,7 @@ export class MissionEntity {
   @Column()
   award: number;
 
-  @ApiProperty({
-    example: "true",
-    description: "User done or not mission - true/false"
-  })
-  @Column({default: false})
-  isDone: boolean;
+  @OneToMany(() => UserMissionEntity, userMission => userMission.mission)
+  userMissions: UserMissionEntity[];
 
 }

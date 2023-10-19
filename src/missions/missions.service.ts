@@ -4,6 +4,7 @@ import {MissionEntity} from "./entities/mission.entity";
 import {Repository} from "typeorm";
 import {CreateMissionDto} from "./dto/create-mission.dto";
 import {UserEntity} from "../users/entities/user.entity";
+import {UserMissionEntity} from "../users/entities/user-mission.entity";
 
 @Injectable()
 export class MissionsService {
@@ -12,7 +13,9 @@ export class MissionsService {
     @InjectRepository(MissionEntity)
     private readonly missionRepository: Repository<MissionEntity>,
     @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>
+    private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(UserMissionEntity)
+    private readonly userMissionRepository: Repository<UserMissionEntity>
   ) {}
 
   async createMission(missionDTO: CreateMissionDto) {
@@ -25,13 +28,49 @@ export class MissionsService {
     }
 
     const mission = this.missionRepository.create(missionDTO)
-    await this.missionRepository.save(mission)
+    const savedMission = await this.missionRepository.save(mission)
 
-    return mission
+    const users = await this.userRepository.find()
+
+    const userMissions = users.map(user => ({
+      user,
+      mission: savedMission,
+      isDone: false
+    }))
+
+    await this.userMissionRepository.insert(userMissions)
+
+    return savedMission
   }
 
-  async getAllMission() {
-    return this.missionRepository.find()
+  async getAllMissionsWithUserStatus() {
+    const missions = await this.missionRepository.find({
+      relations: ['userMissions', 'userMissions.user']
+    });
+
+    return missions.map(missions => ({
+      id: missions.id,
+      title: missions.title,
+      description: missions.description,
+      award: missions.award,
+      userStatus: missions.userMissions.map(userMission => ({
+        userId: userMission.user,
+        isDone: userMission.isDone,
+      })),
+    }));
+  }
+
+  async getAllMission(userId: number) {
+    const user = await this.userRepository.findOne({
+      where: {id: userId},
+      relations: ['userMissions', 'userMissions.mission'],
+    });
+
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    return user.userMissions
   }
 
   async getMissionById(id: number) {
@@ -92,24 +131,31 @@ export class MissionsService {
     return user
   }
 
-  async updateIsDone(id: number) {
-    const mission = await this.missionRepository.findOne({
-      where: {id}
+  async updateIsDone(userID: number, missionID: number) {
+
+    const user = await this.userRepository.findOne({
+      where: {id: userID}
     })
 
-    if (!mission) {
-      throw new BadRequestException('The mission is not found!')
+    const mission = await this.missionRepository.findOne({
+      where: {id: missionID}
+    })
+
+    if (!user || !mission) {
+      throw new BadRequestException('User or mission not found!')
     }
 
-    if (mission.isDone === true) {
-      throw new BadRequestException('The mission is already DONE!')
+    const userMission = await this.userMissionRepository.findOne({
+      where: {user, mission}
+    })
+
+    if (!userMission) {
+      throw new BadRequestException('UserMission was not found!')
     }
 
-    mission.isDone = true
+    userMission.isDone = true
+    return await this.userMissionRepository.save(userMission)
 
-    await this.missionRepository.save(mission)
-
-    return 'The status was updated'
   }
 
 }

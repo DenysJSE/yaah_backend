@@ -23,6 +23,8 @@ export class LessonsController {
     return this.lessonService.createLesson(lessonDTO)
   }
 
+  @Roles("ADMIN")
+  @UseGuards(RolesGuard)
   @Get('get_all')
   getAllLessonsWithUserStatus() {
     return this.lessonService.getAllLessonsWithUserStatus()
@@ -35,6 +37,11 @@ export class LessonsController {
   getAllLessons(@Request() req: any) {
     const userId = req.user.id
     return this.lessonService.getAllLessons(userId)
+  }
+
+  @Get(':id')
+  getLessonById(@Param('id') id: number) {
+    return this.lessonService.getLessonById(id)
   }
 
   @ApiOperation({summary: "Update a Lesson"})

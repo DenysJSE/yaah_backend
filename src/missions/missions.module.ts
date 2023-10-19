@@ -5,10 +5,11 @@ import {TypeOrmModule} from "@nestjs/typeorm";
 import {MissionEntity} from "./entities/mission.entity";
 import {UserEntity} from "../users/entities/user.entity";
 import {AuthModule} from "../auth/auth.module";
+import {UserMissionEntity} from "../users/entities/user-mission.entity";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([MissionEntity, UserEntity]),
+    TypeOrmModule.forFeature([MissionEntity, UserEntity, UserMissionEntity]),
     forwardRef(() => AuthModule)
   ],
   controllers: [MissionsController],

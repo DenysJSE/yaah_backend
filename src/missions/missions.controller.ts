@@ -1,10 +1,11 @@
-import {Body, Controller, Delete, Get, Param, Post, Put, UseGuards} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, Post, Put, UseGuards, Request} from '@nestjs/common';
 import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
 import {MissionsService} from "./missions.service";
 import {CreateMissionDto} from "./dto/create-mission.dto";
 import {Roles} from "../auth/roles-auth.decorator";
 import {RolesGuard} from "../guards/roles.guard";
 import {MissionEntity} from "./entities/mission.entity";
+import {JwtAuthGuard} from "../guards/jwt-auth.guard";
 
 
 @ApiTags('Missions')
@@ -22,11 +23,20 @@ export class MissionsController {
     return this.missionService.createMission(missionDTO)
   }
 
+  @Roles("ADMIN")
+  @UseGuards(RolesGuard)
+  @Get('get_all')
+  getAllLessonsWithUserStatus() {
+    return this.missionService.getAllMissionsWithUserStatus()
+  }
+
   @ApiOperation({summary: "Get All Mission"})
   @ApiResponse({status: 200, type: [MissionEntity]})
+  @UseGuards(JwtAuthGuard)
   @Get()
-  getAllMission() {
-    return this.missionService.getAllMission()
+  getAllMission(@Request() req: any) {
+    const userId = req.user.id
+    return this.missionService.getAllMission(userId)
   }
 
   @ApiOperation({summary: "Get Mission By ID"})
@@ -57,15 +67,17 @@ export class MissionsController {
   @ApiOperation({summary: "Set Award From Mission"})
   @ApiResponse({status: 200, description: 'You get 100 coins from mission'})
   @Put('set_award/:id/:award')
-  setAward(@Param('id') id: number, @Param('award') award: number) {
-    return this.missionService.setAward(id, award)
+  setAward(@Param('id') userId: number, @Param('award') award: number) {
+    return this.missionService.setAward(userId, award)
   }
 
   @ApiOperation({summary: "Set Award From Mission"})
   @ApiResponse({status: 200, description: 'You get 100 coins from mission'})
-  @Put('set_award/:id')
-  updateIsDone(@Param('id') id: number) {
-    return this.missionService.updateIsDone(id)
+  @UseGuards(JwtAuthGuard)
+  @Put('set_done/:id')
+  updateIsDone(@Request() req: any, @Param('id') missionId: number) {
+    const userId = req.user.id
+    return this.missionService.updateIsDone(userId ,missionId)
   }
 
 }

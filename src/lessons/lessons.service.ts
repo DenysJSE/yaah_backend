@@ -87,6 +87,18 @@ export class LessonsService {
     return user.userLessons
   }
 
+  async getLessonById(id: number) {
+    const lesson = await this.lessonRepository.findOne({
+      where: {id}
+    })
+
+    if (!lesson) {
+      throw new BadRequestException(`The lesson with ID: ${id} not found!`)
+    }
+
+    return lesson
+  }
+
   async updateLesson(id: number, lessonDTO: CreateLessonDto) {
     const lesson = await this.lessonRepository.findOne({
       where: {id}
@@ -127,7 +139,7 @@ export class LessonsService {
       where: {id: lessonId}
     });
 
-    if (!user && !lesson) {
+    if (!user || !lesson) {
       throw new BadRequestException('User or Lesson not found');
     }
 
