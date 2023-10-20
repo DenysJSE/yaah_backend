@@ -23,7 +23,9 @@ export class ExamService {
   ) {
   }
 
-  // Create exam using ExamDTO( title, description )
+  /**
+   * @param CreateExamDto - title, description
+   */
   async createExam(CreateExamDto: CreateExamDto): Promise<ExamEntity> {
     const subject = await this.subjectRepository.findOne({
       where: {id: CreateExamDto.subjectId},
@@ -49,7 +51,9 @@ export class ExamService {
     return await this.examRepository.save(exam);
   }
 
-  // Create questions for exam using QuestionDTO ( question, examID )
+  /**
+   * @param createQuestionDto - question, examID
+   */
   async createQuestion(createQuestionDto: CreateQuestionDto): Promise<QuestionEntity> {
     const exam = await this.examRepository.findOne({
       where: {ID: createQuestionDto.examID}
@@ -66,7 +70,9 @@ export class ExamService {
     return await this.questionRepository.save(question);
   }
 
-  // Create options for questions using OptionsDTO ( text of option, questionID, isCorrect )
+  /**
+   * @param createOptionDto - option text, questionID, isCorrect
+   */
   async createOption(createOptionDto: CreateOptionDto): Promise<OptionEntity> {
     const question = await this.questionRepository.findOne({
       where: {ID: createOptionDto.questionID}
@@ -95,12 +101,10 @@ export class ExamService {
     return await this.optionRepository.save(option);
   }
 
-  // Get All Exams
   async getAllExams() {
     return await this.examRepository.find({relations: ['questions', 'questions.option', 'subject']})
   }
 
-  // Get exam by ID
   async getExamByID(examID: number): Promise<ExamEntity> {
     const exam = await this.examRepository.findOne({
       where: {ID: examID},
@@ -112,7 +116,10 @@ export class ExamService {
     return exam;
   }
 
-  // Update info of Exam ( title, description )
+  /**
+   * @param id - examID
+   * @param examDto - title, description
+   */
   async updateExam(id: number, examDto: CreateExamDto) {
     const exam = await this.examRepository.findOne({
       where: {ID: id}
@@ -131,7 +138,10 @@ export class ExamService {
 
   }
 
-  // Update info of Question ( question, examID )
+  /**
+   * @param id - questionID
+   * @param questionDto - question, examID
+   */
   async updateQuestion(id: number, questionDto: CreateQuestionDto) {
     const question = await this.questionRepository.findOne({
       where: {ID: id}
@@ -149,7 +159,10 @@ export class ExamService {
 
   }
 
-  // Update info of Option ( text of option, questionID, isCorrect )
+  /**
+   * @param id - optionID
+   * @param optionDto - option text, questionID, isCorrect
+   */
   async updateOption(id: number, optionDto: CreateOptionDto) {
     const option = await this.optionRepository.findOne({
       where: {ID: id}
@@ -168,7 +181,6 @@ export class ExamService {
 
   }
 
-  // Delete Exam by ID
   async deleteExam(id: number) {
     const exam = await this.examRepository.findOne({
       where: { ID: id },
@@ -188,7 +200,6 @@ export class ExamService {
     return 'The exam was deleted!';
   }
 
-  // Update field isDone in Exam Entity
   async updateIsDone(id: number) {
     const exam = await this.examRepository.findOne({
       where: {ID: id}

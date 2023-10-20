@@ -18,6 +18,9 @@ export class UsersService {
     private roleService: RolesService
   ) {}
 
+  /**
+   * @param createUserDto - nickname, email, password
+   */
   async create(createUserDto: RegistrationUserDto) {
     const existUser = await this.userRepository.findOne({
       where: {
@@ -49,6 +52,9 @@ export class UsersService {
     })
   }
 
+  /**
+   * @param addRoleDto - value, userID
+   */
   async addRole(addRoleDto: AddRoleDto) {
     const user = await this.userRepository.findOne({
       where: {id: addRoleDto.userID}
@@ -71,6 +77,9 @@ export class UsersService {
 
   }
 
+  /**
+   * @param updateUserDto - userID, newNickname
+   */
   async updateNickname(updateUserDto: UpdateUserNicknameDto) {
     const user = await this.userRepository.findOne({
       where: {id: updateUserDto.userID}
@@ -88,6 +97,9 @@ export class UsersService {
 
   }
 
+  /**
+   * @param updateUserPasswordDto - userID, userPassword, newUserPassword
+   */
   async updateUserPassword(updateUserPasswordDto: UpdateUserPasswordDto) {
     const user = await this.userRepository.findOne({
       where: {id: updateUserPasswordDto.userID}

@@ -12,6 +12,9 @@ export class SubjectsService {
     private readonly subjectRepository: Repository<SubjectEntity>
   ) {}
 
+  /**
+   * @param subjectDto - title, description, lessonNumber, examNumber, courseDuration
+   */
   async createSubject(subjectDto: SubjectDto) {
     const existSubject = await this.subjectRepository.findOne({
       where: {title: subjectDto.title}
@@ -35,6 +38,10 @@ export class SubjectsService {
     })
   }
 
+  /**
+   * @param id - subjectID
+   * @param subjectDto - title, description, lessonNumber, examNumber, courseDuration
+   */
   async updateSubject(id: number, subjectDto: SubjectDto) {
     const subject = await this.subjectRepository.findOne({
       where: {id}

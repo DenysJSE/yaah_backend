@@ -18,6 +18,9 @@ export class MissionsService {
     private readonly userMissionRepository: Repository<UserMissionEntity>
   ) {}
 
+  /**
+   * @param missionDTO - title, description, award
+   */
   async createMission(missionDTO: CreateMissionDto) {
     const existMission = await this.missionRepository.findOne({
       where: {title: missionDTO.title}
@@ -83,6 +86,10 @@ export class MissionsService {
     return mission
   }
 
+  /**
+   * @param id - missionID
+   * @param missionDTO - title, description, award
+   */
   async updateMission(id: number, missionDTO: CreateMissionDto) {
     const mission = await this.missionRepository.findOne({
       where: {id}

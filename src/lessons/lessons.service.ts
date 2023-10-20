@@ -21,6 +21,9 @@ export class LessonsService {
     private readonly userLessonRepository: Repository<UserLessonEntity>
   ) {}
 
+  /**
+   * @param lessonDTO - title, lessonData, subjectID
+   */
   async createLesson(lessonDTO: CreateLessonDto) {
     const subject = await this.subjectRepository.findOne({
       where: {id: lessonDTO.subjectId},
@@ -99,6 +102,10 @@ export class LessonsService {
     return lesson
   }
 
+  /**
+   * @param id - lessonID
+   * @param lessonDTO - title, lessonData, subjectID
+   */
   async updateLesson(id: number, lessonDTO: CreateLessonDto) {
     const lesson = await this.lessonRepository.findOne({
       where: {id}

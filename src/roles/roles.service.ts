@@ -12,6 +12,9 @@ export class RolesService {
     private readonly roleRepository: Repository<RoleEntity>
   ) {}
 
+  /**
+   * @param roleDto - value, description
+   */
   async createRole(roleDto: CreateRoleDto) {
 
     const upperCaseRole = roleDto.value.toUpperCase()
@@ -41,6 +44,10 @@ export class RolesService {
     return role
   }
 
+  /**
+   * @param id - roleID
+   * @param roleDto - value, description
+   */
   async updateRole(id: number, roleDto: CreateRoleDto) {
     const role = await this.roleRepository.findOne({
       where: {id}
