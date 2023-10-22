@@ -51,8 +51,9 @@ export class ExamController {
   @ApiResponse({status: 200, type: [ExamEntity]})
   @UseGuards(JwtAuthGuard)
   @Get()
-  getAllExams() {
-    return this.examService.getAllExams()
+  getAllExams(@Request() req: any) {
+    const userID = req.user.id
+    return this.examService.getAllExams(userID)
   }
 
   @ApiOperation({summary: "Get exam by ID"})

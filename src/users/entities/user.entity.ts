@@ -65,7 +65,7 @@ export class UserEntity {
   @OneToMany(() => UserMissionEntity, userMission => userMission.user)
   userMissions: UserMissionEntity[];
 
-  @OneToMany(() => UserExamEntity, userExam => userExam.exam)
+  @OneToMany(() => UserExamEntity, userExam => userExam.user)
   userExams: UserExamEntity[];
 
 }

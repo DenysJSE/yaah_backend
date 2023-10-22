@@ -120,8 +120,17 @@ export class ExamService {
     return await this.optionRepository.save(option);
   }
 
-  async getAllExams() {
-    return await this.examRepository.find({relations: ['questions', 'questions.option', 'subject']})
+  async getAllExams(userID: number) {
+    const user = await this.userRepository.findOne({
+      where: { id: userID },
+      relations: ['userExams', 'userExams.exam', 'userExams.exam.questions', 'userExams.exam.questions.option'],
+    });
+
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    return user.userExams;
   }
 
   async getExamByID(examID: number): Promise<ExamEntity> {
