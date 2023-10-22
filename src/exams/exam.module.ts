@@ -7,11 +7,15 @@ import {QuestionEntity} from "./entities/question.entity";
 import {OptionEntity} from "./entities/option.entity";
 import {AuthModule} from "../auth/auth.module";
 import {SubjectEntity} from "../subjects/entities/subject.entity";
+import {UserEntity} from "../users/entities/user.entity";
+import {UserExamEntity} from "../users/entities/user-exam.entity";
+import {UsersModule} from "../users/users.module";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ExamEntity, QuestionEntity, OptionEntity, SubjectEntity]),
-    forwardRef(() => AuthModule)
+    TypeOrmModule.forFeature([ExamEntity, QuestionEntity, OptionEntity, SubjectEntity, UserEntity, UserExamEntity]),
+    forwardRef(() => AuthModule),
+    UsersModule
   ],
   controllers: [ExamController],
   providers: [ExamService],

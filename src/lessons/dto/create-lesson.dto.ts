@@ -26,4 +26,13 @@ export class CreateLessonDto {
   @IsNotEmpty()
   @IsNumber()
   subjectId: number;
+
+  @ApiProperty({
+    example: "200",
+    description: "The award which user earn after finish the lesson"
+  })
+  @IsNotEmpty()
+  @IsNumber()
+  readonly award: number;
+
 }

@@ -5,6 +5,7 @@ import {Repository} from "typeorm";
 import {CreateMissionDto} from "./dto/create-mission.dto";
 import {UserEntity} from "../users/entities/user.entity";
 import {UserMissionEntity} from "../users/entities/user-mission.entity";
+import {UsersService} from "../users/users.service";
 
 @Injectable()
 export class MissionsService {
@@ -15,7 +16,8 @@ export class MissionsService {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(UserMissionEntity)
-    private readonly userMissionRepository: Repository<UserMissionEntity>
+    private readonly userMissionRepository: Repository<UserMissionEntity>,
+    private readonly usersService: UsersService
   ) {}
 
   /**
@@ -110,16 +112,19 @@ export class MissionsService {
 
   async deleteMission(id: number) {
     const mission = await this.missionRepository.findOne({
-      where: {id}
+      where: {id},
+      relations: ['userMissions']
     })
 
     if (!mission) {
       throw new BadRequestException(`The mission by ID: ${id} not exist!`)
     }
 
-    await this.missionRepository.delete(mission)
+    await this.userMissionRepository.remove(mission.userMissions)
 
-    return 'The mission was deleted successful!'
+    await this.missionRepository.delete(id)
+
+    return `The subject with ID: ${id} was deleted`
   }
 
   async updateIsDone(userID: number, missionID: number) {
@@ -150,25 +155,9 @@ export class MissionsService {
 
     userMission.isDone = true
 
-    await this.setAward(user.id, mission.award)
+    await this.usersService.setAward(user.id, mission.award)
 
     return await this.userMissionRepository.save(userMission)
-  }
-
-
-
-  async setAward(userID: number, awardAmount: number) {
-    const user = await this.userRepository.findOne({
-      where: {id: userID}
-    })
-
-    if (!user) {
-      throw new BadRequestException('The user was not found!')
-    }
-
-    user.coins += Number(awardAmount)
-
-    return await this.userRepository.save(user)
   }
 
 }

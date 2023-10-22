@@ -136,4 +136,19 @@ export class UsersService {
     return `The user with ID: ${id} was deleted`
   }
 
+
+  async setAward(userID: number, awardAmount: number) {
+    const user = await this.userRepository.findOne({
+      where: {id: userID}
+    })
+
+    if (!user) {
+      throw new BadRequestException('The user was not found!')
+    }
+
+    user.coins += Number(awardAmount)
+
+    return await this.userRepository.save(user)
+  }
+
 }

@@ -19,6 +19,7 @@ import {RolesModule} from './roles/roles.module';
 import {RoleEntity} from "./roles/entities/role.entity";
 import {UserLessonEntity} from "./users/entities/user-lesson.entity";
 import {UserMissionEntity} from "./users/entities/user-mission.entity";
+import {UserExamEntity} from "./users/entities/user-exam.entity";
 
 @Module({
   imports: [
@@ -42,7 +43,8 @@ import {UserMissionEntity} from "./users/entities/user-mission.entity";
         OptionEntity,
         RoleEntity,
         UserLessonEntity,
-        UserMissionEntity
+        UserMissionEntity,
+        UserExamEntity
       ],
       synchronize: true,
     }),

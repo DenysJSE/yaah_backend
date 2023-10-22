@@ -2,6 +2,7 @@ import {Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn
 import {QuestionEntity} from "./question.entity";
 import {ApiProperty} from "@nestjs/swagger";
 import {SubjectEntity} from "../../subjects/entities/subject.entity";
+import {UserExamEntity} from "../../users/entities/user-exam.entity";
 
 
 @Entity('Exams')
@@ -29,13 +30,11 @@ export class ExamEntity {
   description: string
 
   @ApiProperty({
-    example: false,
-    description: "Does user finish the exam or not - true/false"
+    example: "200",
+    description: "The award which user earn after finish the exam"
   })
-  @Column({
-    default: false
-  })
-  isDone: boolean
+  @Column()
+  award: number;
 
   @ApiProperty({
     type: () => QuestionEntity,
@@ -53,5 +52,8 @@ export class ExamEntity {
   @ManyToOne(() => SubjectEntity, (subject) => subject.exams)
   @JoinColumn({ name: 'subjectId' })
   subject: SubjectEntity;
+
+  @OneToMany(() => UserExamEntity, userExam => userExam.exam)
+  userExams: UserExamEntity[];
 
 }

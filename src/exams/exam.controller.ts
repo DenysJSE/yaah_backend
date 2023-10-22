@@ -1,4 +1,4 @@
-import {Controller, Get, Post, Body, Param, UseGuards, Put, Delete} from '@nestjs/common';
+import {Controller, Get, Post, Body, Param, UseGuards, Put, Delete, Request} from '@nestjs/common';
 import {ExamService} from './exam.service';
 import {CreateExamDto} from './dto/create-exam.dto';
 import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
@@ -101,9 +101,11 @@ export class ExamController {
 
   @ApiOperation({summary: "Update isDone status"})
   @ApiResponse({status: 200, description: 'The status isDone was updated!', type: [ExamEntity]})
+  @UseGuards(JwtAuthGuard)
   @Put('update_is_done/:id')
-  updateIsDone(@Param('id') id: number) {
-    return this.examService.updateIsDone(id)
+  updateIsDone(@Request() req: any, @Param('id') examID: number) {
+    const userID = req.user.id
+    return this.examService.updateIsDone(userID, examID)
   }
 
 }

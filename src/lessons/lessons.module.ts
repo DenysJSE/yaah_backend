@@ -7,11 +7,13 @@ import {SubjectEntity} from "../subjects/entities/subject.entity";
 import {AuthModule} from "../auth/auth.module";
 import {UserEntity} from "../users/entities/user.entity";
 import {UserLessonEntity} from "../users/entities/user-lesson.entity";
+import {UsersModule} from "../users/users.module";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([LessonEntity, SubjectEntity, UserEntity, UserLessonEntity]),
-    forwardRef(() => AuthModule)
+    forwardRef(() => AuthModule),
+    UsersModule
   ],
   controllers: [LessonsController],
   providers: [LessonsService],

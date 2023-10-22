@@ -8,6 +8,9 @@ import {Repository} from "typeorm";
 import {CreateQuestionDto} from "./dto/create-question.dto";
 import {CreateOptionDto} from "./dto/create-option.dto";
 import {SubjectEntity} from "../subjects/entities/subject.entity";
+import {UserEntity} from "../users/entities/user.entity";
+import {UserExamEntity} from "../users/entities/user-exam.entity";
+import {UsersService} from "../users/users.service";
 
 @Injectable()
 export class ExamService {
@@ -20,6 +23,11 @@ export class ExamService {
     private readonly optionRepository: Repository<OptionEntity>,
     @InjectRepository(SubjectEntity)
     private readonly subjectRepository: Repository<SubjectEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(UserExamEntity)
+    private readonly userExamRepository: Repository<UserExamEntity>,
+    private readonly usersService: UsersService
   ) {
   }
 
@@ -36,7 +44,7 @@ export class ExamService {
     }
 
     const existExam = await this.examRepository.findOne({
-      where: {title: CreateExamDto.title, subject: subject},
+      where: {title: CreateExamDto.title},
     });
 
     if (existExam) {
@@ -47,8 +55,19 @@ export class ExamService {
       ...CreateExamDto,
       subject,
     });
+    const savedExam = await this.examRepository.save(exam)
 
-    return await this.examRepository.save(exam);
+    const users = await this.userRepository.find()
+
+    const userExams = users.map(user => ({
+      user,
+      exam: savedExam,
+      isDone: false
+    }))
+
+    await this.userExamRepository.insert(userExams);
+
+    return savedExam;
   }
 
   /**
@@ -184,7 +203,7 @@ export class ExamService {
   async deleteExam(id: number) {
     const exam = await this.examRepository.findOne({
       where: { ID: id },
-      relations: ['questions', 'questions.option'],
+      relations: ['questions', 'questions.option', 'userExams'],
     });
 
     if (!exam) {
@@ -193,31 +212,41 @@ export class ExamService {
 
     const questions = exam.questions;
 
+    await this.userExamRepository.remove(exam.userExams)
+
     await this.optionRepository.remove(exam.questions.flatMap((q) => q.option));
     await this.questionRepository.remove(questions);
     await this.examRepository.remove(exam);
 
-    return 'The exam was deleted!';
+    return `The exam with ID: ${id} was deleted!`;
   }
 
-  async updateIsDone(id: number) {
-    const exam = await this.examRepository.findOne({
-      where: {ID: id}
+  async updateIsDone(userID: number, examID: number) {
+    const user = await this.userRepository.findOne({
+      where: {id: userID}
     })
 
-    if (!exam) {
-      throw new BadRequestException('The exam is not found!')
+    const exam = await this.examRepository.findOne({
+      where: {ID: examID}
+    })
+
+    if (!exam && !user) {
+      throw new BadRequestException('User or Exam not found');
     }
 
-    if (exam.isDone === true) {
-      throw new BadRequestException('The exam is already DONE!')
+    const userExam = await this.userExamRepository.findOne({
+      where: {user, exam}
+    })
+
+    if (!userExam) {
+      throw new BadRequestException('UserExam was not found')
     }
 
-    exam.isDone = true
+    userExam.isDone = true
 
-    await this.examRepository.save(exam)
+    await this.usersService.setAward(user.id, exam.award)
 
-    return 'The status isDone was updated'
+    return this.userExamRepository.save(userExam)
   }
 
 }

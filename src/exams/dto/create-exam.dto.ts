@@ -17,7 +17,15 @@ export class CreateExamDto {
   })
   @IsNotEmpty()
   @Length(3)
-  description: string
+  description: string;
+
+  @ApiProperty({
+    example: "200",
+    description: "The award which user earn after finish the exam"
+  })
+  @IsNotEmpty()
+  @IsNumber()
+  readonly award: number;
 
   @ApiProperty({
     example: "1",

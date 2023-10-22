@@ -6,6 +6,7 @@ import {CreateLessonDto} from "./dto/create-lesson.dto";
 import {SubjectEntity} from "../subjects/entities/subject.entity";
 import {UserEntity} from "../users/entities/user.entity";
 import {UserLessonEntity} from "../users/entities/user-lesson.entity";
+import {UsersService} from "../users/users.service";
 
 @Injectable()
 export class LessonsService {
@@ -18,7 +19,8 @@ export class LessonsService {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(UserLessonEntity)
-    private readonly userLessonRepository: Repository<UserLessonEntity>
+    private readonly userLessonRepository: Repository<UserLessonEntity>,
+    private readonly usersService: UsersService
   ) {}
 
   /**
@@ -125,12 +127,15 @@ export class LessonsService {
 
   async deleteLesson(id: number) {
     const lesson = await this.lessonRepository.findOne({
-      where: {id}
+      where: {id},
+      relations: ['userLessons'],
     })
 
     if (!lesson) {
       throw new BadRequestException('The subject is not found!')
     }
+
+    await this.userLessonRepository.remove(lesson.userLessons);
 
     await this.lessonRepository.delete(id)
 
@@ -159,6 +164,9 @@ export class LessonsService {
     }
 
     userLesson.isDone = true;
+
+    await this.usersService.setAward(user.id, lesson.award)
+
     return this.userLessonRepository.save(userLesson);
   }
 
