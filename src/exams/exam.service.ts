@@ -159,6 +159,7 @@ export class ExamService {
 
     exam.title = examDto.title
     exam.description = examDto.description
+    exam.award = examDto.award
 
     await this.examRepository.save(exam)
 
@@ -239,7 +240,7 @@ export class ExamService {
       where: {ID: examID}
     })
 
-    if (!exam && !user) {
+    if (!exam || !user) {
       throw new BadRequestException('User or Exam not found');
     }
 

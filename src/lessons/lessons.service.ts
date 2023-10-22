@@ -119,6 +119,7 @@ export class LessonsService {
 
     lesson.title = lessonDTO.title
     lesson.lessonData = lessonDTO.lessonData
+    lesson.award = lessonDTO.award
 
     await this.lessonRepository.save(lesson)
 
