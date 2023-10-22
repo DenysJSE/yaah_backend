@@ -122,22 +122,6 @@ export class MissionsService {
     return 'The mission was deleted successful!'
   }
 
-  async setAward(userID: number, awardAmount: number) {
-    const user = await this.userRepository.findOne({
-      where: {id: userID}
-    })
-
-    if (!user) {
-      throw new BadRequestException('The user was not found!')
-    }
-
-    user.coins += Number(awardAmount)
-
-    await this.userRepository.save(user)
-
-    return user
-  }
-
   async updateIsDone(userID: number, missionID: number) {
 
     const user = await this.userRepository.findOne({
@@ -160,9 +144,31 @@ export class MissionsService {
       throw new BadRequestException('UserMission was not found!')
     }
 
-    userMission.isDone = true
-    return await this.userMissionRepository.save(userMission)
+    if (userMission.isDone) {
+      throw new BadRequestException('The mission is already done!')
+    }
 
+    userMission.isDone = true
+
+    await this.setAward(user.id, mission.award)
+
+    return await this.userMissionRepository.save(userMission)
+  }
+
+
+
+  async setAward(userID: number, awardAmount: number) {
+    const user = await this.userRepository.findOne({
+      where: {id: userID}
+    })
+
+    if (!user) {
+      throw new BadRequestException('The user was not found!')
+    }
+
+    user.coins += Number(awardAmount)
+
+    return await this.userRepository.save(user)
   }
 
 }

@@ -66,13 +66,6 @@ export class MissionsController {
 
   @ApiOperation({summary: "Set Award From Mission"})
   @ApiResponse({status: 200, description: 'You get 100 coins from mission'})
-  @Put('set_award/:id/:award')
-  setAward(@Param('id') userId: number, @Param('award') award: number) {
-    return this.missionService.setAward(userId, award)
-  }
-
-  @ApiOperation({summary: "Set Award From Mission"})
-  @ApiResponse({status: 200, description: 'You get 100 coins from mission'})
   @UseGuards(JwtAuthGuard)
   @Put('set_done/:id')
   updateIsDone(@Request() req: any, @Param('id') missionId: number) {
