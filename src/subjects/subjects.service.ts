@@ -29,7 +29,7 @@ export class SubjectsService {
   }
 
   async getAllSubjects() {
-    return await this.subjectRepository.find()
+    return await this.subjectRepository.find({relations: ['exams', 'lessons']})
   }
 
   async getSubjectById(id: number) {

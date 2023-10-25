@@ -42,7 +42,13 @@ export class UsersService {
   }
 
   async getAllUsers() {
-    return await this.userRepository.find({relations: ['roles']})
+    const user = await this.userRepository.find({relations: ['roles']})
+
+    user.map(users => {
+      delete users.password
+    })
+
+    return user
   }
 
   async getUserByEmail(email: string) {
@@ -57,12 +63,19 @@ export class UsersService {
    */
   async addRole(addRoleDto: AddRoleDto) {
     const user = await this.userRepository.findOne({
-      where: {id: addRoleDto.userID}
+      where: {id: addRoleDto.userID},
+      relations: ['roles']
     })
     const role = await this.roleService.getRoleByValue(addRoleDto.value)
 
     if (!user || !role) {
-      throw new BadRequestException('User or role are not found');
+      throw new BadRequestException('User not found');
+    }
+
+    const alreadyHasRole = user.roles.some((userRole) => userRole.id === role.id);
+
+    if (alreadyHasRole) {
+      throw new BadRequestException('User already has this role');
     }
 
     if (!user.roles) {
@@ -71,10 +84,11 @@ export class UsersService {
 
     user.roles.push(role);
 
-    await this.userRepository.save(user)
+    await this.userRepository.save(user);
 
-    return addRoleDto;
+    delete user.password
 
+    return user
   }
 
   /**
@@ -92,6 +106,8 @@ export class UsersService {
     user.nickname = updateUserDto.newNickname
 
     await this.userRepository.save(user)
+
+    delete user.password
 
     return user
 

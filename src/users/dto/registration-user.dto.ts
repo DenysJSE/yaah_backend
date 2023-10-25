@@ -1,5 +1,5 @@
 import {ApiProperty} from "@nestjs/swagger";
-import {IsEmail, IsNotEmpty, Length} from "class-validator";
+import {IsAlphanumeric, IsEmail, IsNotEmpty, Length} from "class-validator";
 
 export class RegistrationUserDto {
 
@@ -7,6 +7,7 @@ export class RegistrationUserDto {
     example: "Denys123",
     description: "The nickname of the user"
   })
+  @IsAlphanumeric()
   @IsNotEmpty()
   @Length(3,50)
   readonly nickname: string;

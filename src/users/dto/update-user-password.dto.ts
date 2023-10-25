@@ -18,7 +18,7 @@ export class UpdateUserPasswordDto extends PartialType(RegistrationUserDto) {
     description: "The previous password of the user"
   })
   @IsNotEmpty()
-  @Length(6, 20)
+  @Length(6, 30)
   userPassword: string
 
   @ApiProperty({
@@ -26,7 +26,7 @@ export class UpdateUserPasswordDto extends PartialType(RegistrationUserDto) {
     description: "The new password of the user"
   })
   @IsNotEmpty()
-  @Length(6, 20)
+  @Length(6, 30)
   newUserPassword: string
 
 }

@@ -79,7 +79,7 @@ export class ExamController {
   @UseGuards(RolesGuard)
   @Put('update_question/:id')
   updateQuestion(@Param('id') id: number, @Body() questionDto: CreateQuestionDto) {
-    return this.examService.updateQuestion(id, questionDto)
+    return this.examService.updateQuestion(id, questionDto.question)
   }
 
   @ApiOperation({summary: "Update Option Info"})
@@ -88,7 +88,7 @@ export class ExamController {
   @UseGuards(RolesGuard)
   @Put('update_option/:id')
   updateOption(@Param('id') id: number, @Body() optionDto: CreateOptionDto) {
-    return this.examService.updateOption(id, optionDto)
+    return this.examService.updateOption(id, optionDto.text, optionDto.isCorrect)
   }
 
   @ApiOperation({summary: "Delete Exam"})

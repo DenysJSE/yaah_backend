@@ -1,5 +1,5 @@
 import {ApiProperty} from "@nestjs/swagger";
-import {IsNotEmpty, Length} from "class-validator";
+import {IsNotEmpty, Length, Matches} from "class-validator";
 
 export class CreateRoleDto {
 
@@ -9,6 +9,7 @@ export class CreateRoleDto {
   })
   @IsNotEmpty()
   @Length(3)
+  @Matches(/^[A-Za-z_]+$/)
   readonly value: string;
 
   @ApiProperty({

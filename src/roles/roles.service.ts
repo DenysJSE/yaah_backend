@@ -57,7 +57,7 @@ export class RolesService {
       throw new BadRequestException('The role is not found!')
     }
 
-    role.value = roleDto.value
+    role.value = roleDto.value.toUpperCase()
     role.description = roleDto.description
 
     await this.roleRepository.save(role)

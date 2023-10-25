@@ -4,7 +4,7 @@ import {InjectRepository} from "@nestjs/typeorm";
 import {ExamEntity} from "./entities/exam.entity";
 import {QuestionEntity} from "./entities/question.entity";
 import {OptionEntity} from "./entities/option.entity";
-import {Repository} from "typeorm";
+import {Not, Repository} from "typeorm";
 import {CreateQuestionDto} from "./dto/create-question.dto";
 import {CreateOptionDto} from "./dto/create-option.dto";
 import {SubjectEntity} from "../subjects/entities/subject.entity";
@@ -149,16 +149,22 @@ export class ExamService {
    * @param examDto - title, description
    */
   async updateExam(id: number, examDto: CreateExamDto) {
-    const exam = await this.examRepository.findOne({
-      where: {ID: id}
+    const subject = await this.subjectRepository.findOne({
+      where: {id: examDto.subjectId}
     })
 
-    if (!exam) {
-      throw new BadRequestException('The exam is not found!')
+    const exam = await this.examRepository.findOne({
+      where: {ID: id},
+      relations: ['subject']
+    })
+
+    if (!exam || !subject) {
+      throw new BadRequestException('The exam or subject is not found!')
     }
 
     exam.title = examDto.title
     exam.description = examDto.description
+    exam.subject = subject
     exam.award = examDto.award
 
     await this.examRepository.save(exam)
@@ -169,9 +175,9 @@ export class ExamService {
 
   /**
    * @param id - questionID
-   * @param questionDto - question, examID
+   * @param updatedQuestion - question
    */
-  async updateQuestion(id: number, questionDto: CreateQuestionDto) {
+  async updateQuestion(id: number, updatedQuestion: string) {
     const question = await this.questionRepository.findOne({
       where: {ID: id}
     })
@@ -180,7 +186,7 @@ export class ExamService {
       throw new BadRequestException('The question is not found!')
     }
 
-    question.question = questionDto.question
+    question.question = updatedQuestion
 
     await this.questionRepository.save(question)
 
@@ -190,24 +196,41 @@ export class ExamService {
 
   /**
    * @param id - optionID
-   * @param optionDto - option text, questionID, isCorrect
+   * @param updatedOption - option text
+   * @param updatedIsCorrect - true or false
    */
-  async updateOption(id: number, optionDto: CreateOptionDto) {
+  async updateOption(id: number, updatedOption: string, updatedIsCorrect: boolean) {
     const option = await this.optionRepository.findOne({
-      where: {ID: id}
-    })
+      where: { ID: id },
+      relations: ['question'],
+    });
 
     if (!option) {
-      throw new BadRequestException('The option is not found!')
+      throw new BadRequestException('The option is not found!');
     }
 
-    option.text = optionDto.text
-    option.isCorrect = optionDto.isCorrect
+    const question = option.question;
 
-    await this.optionRepository.save(option)
+    if (updatedIsCorrect) {
+      const existingTrueOption = await this.optionRepository.findOne({
+        where: {
+          question,
+          isCorrect: true,
+          ID: Not(id),
+        },
+      });
 
-    return option
+      if (existingTrueOption) {
+        throw new BadRequestException('Another true option already exists for this question');
+      }
+    }
 
+    option.text = updatedOption;
+    option.isCorrect = updatedIsCorrect;
+
+    await this.optionRepository.save(option);
+
+    return option;
   }
 
   async deleteExam(id: number) {

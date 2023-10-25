@@ -1,5 +1,5 @@
 import {ApiProperty} from "@nestjs/swagger";
-import {IsNotEmpty, IsNumber, Length} from "class-validator";
+import {IsNotEmpty, IsNumber, Length, Matches} from "class-validator";
 
 export class CreateLessonDto {
 
@@ -7,6 +7,7 @@ export class CreateLessonDto {
     example: "Past Simple",
     description: "The title of lesson"
   })
+  @Matches(/^[A-Za-z0-9-\s]*$/)
   @IsNotEmpty()
   @Length(3)
   readonly title: string

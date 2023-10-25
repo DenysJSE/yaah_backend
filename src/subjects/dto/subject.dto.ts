@@ -1,5 +1,5 @@
 import {ApiProperty} from "@nestjs/swagger";
-import {IsNotEmpty, IsNumber, Length} from "class-validator";
+import {IsNotEmpty, IsNumber, Length, Matches} from "class-validator";
 
 export class SubjectDto {
 
@@ -7,6 +7,7 @@ export class SubjectDto {
     example: "English Language",
     description: "The name of the subject"
   })
+  @Matches(/^[A-Za-z\s]+$/)
   @IsNotEmpty()
   @Length(3)
   readonly title: string;
