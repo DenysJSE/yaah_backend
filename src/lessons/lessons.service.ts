@@ -79,6 +79,12 @@ export class LessonsService {
     }));
   }
 
+  async getLessonListBySubject() {
+    return await this.lessonRepository.find({
+      relations: ["subject"]
+    })
+  }
+
   async getAllLessons(userId: number) {
     const user = await this.userRepository.findOne({
       where: {id: userId},

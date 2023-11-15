@@ -30,6 +30,11 @@ export class LessonsController {
     return this.lessonService.getAllLessonsWithUserStatus()
   }
 
+  @Get('lesson_list')
+  getLessonList() {
+    return this.lessonService.getLessonListBySubject()
+  }
+
   @ApiOperation({summary: "Get All Lessons"})
   @ApiResponse({status: 200, type: [LessonEntity]})
   @UseGuards(JwtAuthGuard)
