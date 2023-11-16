@@ -88,7 +88,7 @@ export class LessonsService {
   async getAllLessons(userId: number) {
     const user = await this.userRepository.findOne({
       where: {id: userId},
-      relations: ['userLessons', 'userLessons.lesson'],
+      relations: ['userLessons', 'userLessons.lesson', 'userLessons.lesson.subject'],
     });
 
     if (!user) {

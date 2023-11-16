@@ -17,21 +17,33 @@ export class AuthService {
 
   async login(userDto: LoginUserDto) {
     const user = await this.validateUser(userDto)
-    return this.generateToken(user)
+    delete user.password;
+    const tokenData = await this.generateToken(user)
+    const token = tokenData.token
+    return {
+      token,
+      user
+    }
   }
 
   async registration(userDto: RegistrationUserDto) {
     const candidate = await this.userService.getUserByEmail(userDto.email)
 
     if (candidate) {
-      throw new BadRequestException('User already exist')
+      throw new BadRequestException('User with such email already exist')
     }
 
     const hashPassword = await bcrypt.hash(userDto.password, 5)
 
     const user = await this.userService.create({...userDto, password: hashPassword})
 
-    return this.generateToken(user)
+    delete user.password
+    const tokenData = await this.generateToken(user)
+    const token = tokenData.token
+    return {
+      token,
+      user: user
+    }
   }
 
   async generateToken(user: UserEntity) {
@@ -42,7 +54,7 @@ export class AuthService {
       roles: user.roles
     }
     return {
-      token: this.jwtService.sign(payload)
+      token: await this.jwtService.sign(payload)
     }
   }
 

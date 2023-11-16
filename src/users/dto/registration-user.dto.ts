@@ -16,7 +16,7 @@ export class RegistrationUserDto {
     example: "email@gmail.com",
     description: "The email of the user"
   })
-  @IsEmail()
+  @IsEmail({}, {message: 'Incorrect format of email, check it again'})
   @IsNotEmpty()
   readonly email: string;
 

@@ -30,7 +30,17 @@ export class UsersService {
     })
 
     if (existUser) {
-      throw new BadRequestException('The user already exist')
+      throw new BadRequestException('The user with such email already exist')
+    }
+
+    const existNicknameUser = await this.userRepository.findOne({
+      where: {
+        nickname: createUserDto.nickname
+      },
+      relations: ['roles']
+    })
+    if (existNicknameUser) {
+      throw new BadRequestException('The nickname is already taken')
     }
 
     const user = this.userRepository.create(createUserDto)
@@ -54,6 +64,13 @@ export class UsersService {
   async getUserByEmail(email: string) {
     return await this.userRepository.findOne({
       where: {email},
+      relations: ['roles']
+    })
+  }
+
+  async getUserByID(id: number) {
+    return await this.userRepository.findOne({
+      where: {id},
       relations: ['roles']
     })
   }
