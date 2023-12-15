@@ -255,29 +255,26 @@ export class ExamService {
   }
 
   async updateIsDone(userID: number, examID: number) {
-    const user = await this.userRepository.findOne({
-      where: {id: userID}
-    })
-
-    const exam = await this.examRepository.findOne({
-      where: {ID: examID}
-    })
-
-    if (!exam || !user) {
-      throw new BadRequestException('User or Exam not found');
-    }
-
     const userExam = await this.userExamRepository.findOne({
-      where: {user, exam}
+      where: {id: examID},
+      relations: ['user', 'lesson']
     })
 
     if (!userExam) {
       throw new BadRequestException('UserExam was not found')
     }
 
+    const exam = await this.examRepository.findOne({
+      where: {ID: userExam.exam.ID}
+    })
+
+    if (!exam) {
+      throw new BadRequestException('Lesson not found');
+    }
+
     userExam.isDone = true
 
-    await this.usersService.setAward(user.id, exam.award)
+    await this.usersService.setAward(userID, exam.award)
 
     return this.userExamRepository.save(userExam)
   }
