@@ -123,7 +123,7 @@ export class ExamService {
   async getAllExams(userID: number) {
     const user = await this.userRepository.findOne({
       where: { id: userID },
-      relations: ['userExams', 'userExams.exam', 'userExams.exam.questions', 'userExams.exam.questions.option'],
+      relations: ['userExams', 'userExams.exam', 'userExams.exam.questions', 'userExams.exam.questions.option',  'userExams.exam.subject'],
     });
 
     if (!user) {
@@ -133,13 +133,13 @@ export class ExamService {
     return user.userExams;
   }
 
-  async getExamByID(examID: number): Promise<ExamEntity> {
-    const exam = await this.examRepository.findOne({
-      where: {ID: examID},
-      relations: ['questions', 'questions.option']
+  async getExamByID(examID: number) {
+    const exam = await this.userExamRepository.findOne({
+      where: {id: examID},
+      relations: ['exam', 'exam.questions', 'exam.subject', 'exam.questions.option']
     });
     if (!exam) {
-      throw new BadRequestException('Test not found');
+      throw new BadRequestException('Exam not found');
     }
     return exam;
   }

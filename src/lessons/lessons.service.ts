@@ -99,8 +99,9 @@ export class LessonsService {
   }
 
   async getLessonById(id: number) {
-    const lesson = await this.lessonRepository.findOne({
-      where: {id}
+    const lesson = await this.userLessonRepository.findOne({
+      where: {id},
+      relations: ['lesson', 'lesson.subject']
     })
 
     if (!lesson) {
@@ -150,29 +151,26 @@ export class LessonsService {
   }
 
   async updateIsDone(userId: number, lessonId: number) {
-    const user = await this.userRepository.findOne({
-      where: {id: userId}
-    });
-
-    const lesson = await this.lessonRepository.findOne({
-      where: {id: lessonId}
-    });
-
-    if (!user || !lesson) {
-      throw new BadRequestException('User or Lesson not found');
-    }
-
     const userLesson = await this.userLessonRepository.findOne({
-      where: { user, lesson },
+      where: { id: lessonId },
+      relations: ['user', 'lesson']
     });
 
     if (!userLesson) {
       throw new BadRequestException('UserLesson not found');
     }
 
+    const lesson = await this.lessonRepository.findOne({
+      where: { id: userLesson.lesson.id },
+    });
+
+    if (!lesson) {
+      throw new BadRequestException('Lesson not found');
+    }
+
     userLesson.isDone = true;
 
-    await this.usersService.setAward(user.id, lesson.award)
+    await this.usersService.setAward(userId, lesson.award);
 
     return this.userLessonRepository.save(userLesson);
   }

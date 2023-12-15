@@ -60,7 +60,7 @@ export class ExamController {
   @ApiResponse({status: 200, type: [ExamEntity]})
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  getExamByID(@Param('id') examID: number): Promise<ExamEntity> {
+  getExamByID(@Param('id') examID: number) {
     return this.examService.getExamByID(examID);
   }
 

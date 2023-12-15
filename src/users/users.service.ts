@@ -8,6 +8,7 @@ import {AddRoleDto} from "./dto/add-role.dto";
 import {UpdateUserNicknameDto} from "./dto/update-user-nickname.dto";
 import {UpdateUserPasswordDto} from "./dto/update-user-password.dto";
 import * as bcrypt from 'bcrypt'
+import {JwtService} from "@nestjs/jwt";
 
 @Injectable()
 export class UsersService {
@@ -15,7 +16,8 @@ export class UsersService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
-    private roleService: RolesService
+    private roleService: RolesService,
+    private jwtService: JwtService
   ) {}
 
   /**

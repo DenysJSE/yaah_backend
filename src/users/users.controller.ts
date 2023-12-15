@@ -1,4 +1,4 @@
-import {Controller, Get, Post, Body, UseGuards, Delete, Param, Put} from '@nestjs/common';
+import {Controller, Get, Post, Body, UseGuards, Delete, Param, Put, Req} from '@nestjs/common';
 import {UsersService} from './users.service';
 import {RegistrationUserDto} from './dto/registration-user.dto';
 import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
@@ -9,7 +9,19 @@ import {RoleEntity} from "../roles/entities/role.entity";
 import {AddRoleDto} from "./dto/add-role.dto";
 import {UpdateUserNicknameDto} from "./dto/update-user-nickname.dto";
 import {UpdateUserPasswordDto} from "./dto/update-user-password.dto";
+import {JwtAuthGuard} from "../guards/jwt-auth.guard";
+import { Request } from 'express';
 
+interface IUser {
+  id: number,
+  email: string
+  nickname: string,
+  roles: {
+    id: number,
+    value: string,
+    description: string
+  }
+}
 
 @ApiTags('Users')
 @Controller('users')
@@ -33,9 +45,11 @@ export class UsersController {
     return this.usersService.getAllUsers();
   }
 
-  @Get('/:id')
-  getUserByID(@Param('id') id: number) {
-    return this.usersService.getUserByID(id)
+  @UseGuards(JwtAuthGuard)
+  @Get('/get_user')
+  getUserByID(@Req() req: Request) {
+    const user = req.user as IUser;
+    return this.usersService.getUserByID(user.id)
   }
 
   @ApiOperation({summary: "Add Role"})

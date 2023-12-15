@@ -8,7 +8,10 @@ async function start() {
   const app = await NestFactory.create(AppModule);
 
   app.setGlobalPrefix('api')
-  app.enableCors()
+  app.enableCors({
+    origin: true,
+    credentials: true,
+  })
 
   const config = new DocumentBuilder()
     .setTitle('Yaah - Your Academy At Home')
