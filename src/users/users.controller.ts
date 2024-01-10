@@ -1,4 +1,4 @@
-import {Controller, Get, Post, Body, UseGuards, Delete, Param, Put, Req} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards} from '@nestjs/common';
 import {UsersService} from './users.service';
 import {RegistrationUserDto} from './dto/registration-user.dto';
 import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
@@ -10,7 +10,7 @@ import {AddRoleDto} from "./dto/add-role.dto";
 import {UpdateUserNicknameDto} from "./dto/update-user-nickname.dto";
 import {UpdateUserPasswordDto} from "./dto/update-user-password.dto";
 import {JwtAuthGuard} from "../guards/jwt-auth.guard";
-import { Request } from 'express';
+import {Request} from 'express';
 
 interface IUser {
   id: number,
@@ -82,6 +82,16 @@ export class UsersController {
   @Delete(':id')
   deleteUser(@Param('id') id: number) {
     return this.usersService.deleteUser(id)
+  }
+
+  @Delete(':userId/roles/:roleId')
+  async deleteRoleForUser(@Param('userId') userId: number, @Param('roleId') roleId: number) {
+    return await this.usersService.deleteRoleForUser(userId, roleId);
+  }
+
+  @Get('getUserRoles/:userID')
+  async getUserRoles(@Param('userID') userID: number) {
+    return await this.usersService.getUserRoles(userID)
   }
 
 }

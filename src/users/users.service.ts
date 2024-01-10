@@ -8,7 +8,6 @@ import {AddRoleDto} from "./dto/add-role.dto";
 import {UpdateUserNicknameDto} from "./dto/update-user-nickname.dto";
 import {UpdateUserPasswordDto} from "./dto/update-user-password.dto";
 import * as bcrypt from 'bcrypt'
-import {JwtService} from "@nestjs/jwt";
 
 @Injectable()
 export class UsersService {
@@ -16,8 +15,7 @@ export class UsersService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
-    private roleService: RolesService,
-    private jwtService: JwtService
+    private roleService: RolesService
   ) {}
 
   /**
@@ -54,7 +52,12 @@ export class UsersService {
   }
 
   async getAllUsers() {
-    const user = await this.userRepository.find({relations: ['roles']})
+    const user = await this.userRepository.find({
+      relations: ['roles'],
+      order: {
+        id: "ASC"
+      }
+    })
 
     user.map(users => {
       delete users.password
@@ -114,6 +117,14 @@ export class UsersService {
    * @param updateUserDto - userID, newNickname
    */
   async updateNickname(updateUserDto: UpdateUserNicknameDto) {
+    const existNickname = await this.userRepository.findOne({
+      where: {nickname: updateUserDto.newNickname}
+    })
+
+    if (existNickname) {
+      throw new BadRequestException('The such nickname already exist!')
+    }
+
     const user = await this.userRepository.findOne({
       where: {id: updateUserDto.userID}
     })
@@ -184,6 +195,52 @@ export class UsersService {
     user.coins += Number(awardAmount)
 
     return await this.userRepository.save(user)
+  }
+
+  async deleteRoleForUser(userId: number, roleId: number) {
+    const user = await this.userRepository.findOne({
+      where: {id: userId},
+      relations: ['roles']
+    });
+
+    if (!user) {
+      throw new BadRequestException(`User with ID ${userId} not found`);
+    }
+
+    const role = await this.roleService.getRoleByID(roleId);
+
+    if (!role) {
+      throw new BadRequestException(`Role with ID ${roleId} not found`);
+    }
+
+    if (role.value === 'ADMIN') {
+      throw new BadRequestException('You can not delete ADMIN role')
+    }
+
+    const userHasRole = user.roles.some(userRole => userRole.id == roleId);
+
+    if (!userHasRole) {
+      throw new BadRequestException(`User does not have the specified role`);
+    }
+
+    user.roles = user.roles.filter(userRole => userRole.id != roleId);
+
+    await this.userRepository.save(user);
+
+    return user;
+  }
+
+  async getUserRoles(userID: number) {
+    const user = await this.userRepository.findOne({
+      where: {id: userID},
+      relations: ['roles']
+    })
+
+    if (!user) {
+      throw new BadRequestException(`User with ID ${userID} not found`);
+    }
+
+    return user.roles;
   }
 
 }

@@ -9,7 +9,7 @@ export class UserMissionEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => UserEntity, user => user.userMissions)
+  @ManyToOne(() => UserEntity, user => user.userMissions, {onDelete: "CASCADE"})
   user: UserEntity;
 
   @ManyToOne(() => MissionEntity, mission => mission.userMissions)

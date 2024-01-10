@@ -7,7 +7,7 @@ export class UserExamEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => UserEntity, user => user.userExams)
+  @ManyToOne(() => UserEntity, user => user.userExams, {onDelete: "CASCADE"})
   user: UserEntity;
 
   @ManyToOne(() => ExamEntity, exam => exam.userExams)

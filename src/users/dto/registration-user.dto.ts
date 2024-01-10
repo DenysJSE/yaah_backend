@@ -9,7 +9,7 @@ export class RegistrationUserDto {
   })
   @IsAlphanumeric()
   @IsNotEmpty()
-  @Length(3,50)
+  @Length(3,30)
   readonly nickname: string;
 
   @ApiProperty({

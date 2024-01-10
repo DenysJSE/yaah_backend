@@ -1,5 +1,5 @@
 import {
-  Column,
+  Column, CreateDateColumn,
   Entity,
   JoinTable,
   ManyToMany, OneToMany,
@@ -49,6 +49,9 @@ export class UserEntity {
   })
   @Column({default: 0})
   coins: number;
+
+  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  created_at: Date;
 
   @ApiProperty({
     type: () => RoleEntity,

@@ -44,6 +44,18 @@ export class RolesService {
     return role
   }
 
+  async getRoleByID(id: number) {
+    const role = await this.roleRepository.findOne({
+      where: {id}
+    })
+
+    if (!role) {
+      throw new BadRequestException('The role is not found!')
+    }
+
+    return role
+  }
+
   /**
    * @param id - roleID
    * @param roleDto - value, description
