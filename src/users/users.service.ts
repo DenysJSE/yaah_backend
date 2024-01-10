@@ -8,6 +8,10 @@ import {AddRoleDto} from "./dto/add-role.dto";
 import {UpdateUserNicknameDto} from "./dto/update-user-nickname.dto";
 import {UpdateUserPasswordDto} from "./dto/update-user-password.dto";
 import * as bcrypt from 'bcrypt'
+import {LessonEntity} from "../lessons/entities/lesson.entity";
+import {UserLessonEntity} from "./entities/user-lesson.entity";
+import {UserExamEntity} from "./entities/user-exam.entity";
+import {ExamEntity} from "../exams/entities/exam.entity";
 
 @Injectable()
 export class UsersService {
@@ -15,6 +19,14 @@ export class UsersService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(LessonEntity)
+    private readonly lessonRepository: Repository<LessonEntity>,
+    @InjectRepository(ExamEntity)
+    private readonly examRepository: Repository<ExamEntity>,
+    @InjectRepository(UserLessonEntity)
+    private readonly userLessonRepository: Repository<UserLessonEntity>,
+    @InjectRepository(UserExamEntity)
+    private readonly userExamRepository: Repository<UserExamEntity>,
     private roleService: RolesService
   ) {}
 
@@ -48,7 +60,25 @@ export class UsersService {
 
     user.roles = [role]
 
-    return await this.userRepository.save(user)
+    const existingLessons = await this.lessonRepository.find();
+    const userLessons = existingLessons.map((lesson) => ({
+      user,
+      lesson,
+      isDone: false,
+    }));
+
+    const existingExams = await this.examRepository.find();
+    const userExams = existingExams.map((exam) => ({
+      user,
+      exam,
+      isDone: false,
+    }));
+
+    await this.userRepository.save(user);
+    await this.userLessonRepository.insert(userLessons);
+    await this.userExamRepository.insert(userExams);
+
+    return user
   }
 
   async getAllUsers() {
