@@ -109,4 +109,16 @@ export class ExamController {
     return this.examService.updateIsDone(userID, examID)
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Put('update_correct_answer_amount/:id/correct_answer_amount/:correct_answer')
+  updateCorrectAnswerAmount(@Param('id') userExamID: number, @Param('correct_answer') correctAnswer: number) {
+    return this.examService.updateCorrectAnswerAmount(userExamID, correctAnswer)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('get_exam_mark/:id')
+  getExamMark(@Param('id') examID: number) {
+    return this.examService.getExamMark(examID)
+  }
+
 }

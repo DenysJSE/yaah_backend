@@ -15,4 +15,7 @@ export class UserExamEntity {
 
   @Column({ default: false })
   isDone: boolean;
+
+  @Column({default: 0})
+  correctAnswerAmount: number;
 }

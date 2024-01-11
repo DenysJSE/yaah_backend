@@ -257,7 +257,7 @@ export class ExamService {
   async updateIsDone(userID: number, examID: number) {
     const userExam = await this.userExamRepository.findOne({
       where: {id: examID},
-      relations: ['user', 'lesson']
+      relations: ['user', 'exam']
     })
 
     if (!userExam) {
@@ -277,6 +277,47 @@ export class ExamService {
     await this.usersService.setAward(userID, exam.award)
 
     return this.userExamRepository.save(userExam)
+  }
+
+  async updateCorrectAnswerAmount(userExamID: number, correctAnswer: number) {
+    const userExam = await this.userExamRepository.findOne({
+      where: {id: userExamID}
+    })
+
+    if (!userExam) {
+      throw new BadRequestException('The exam was not found!')
+    }
+
+    userExam.correctAnswerAmount = correctAnswer
+
+    return this.userExamRepository.save(userExam)
+  }
+
+  async getCorrectExamAnswer(examID: number) {
+    const exam = await this.userExamRepository.findOne({
+      where: {id: examID}
+    })
+
+    if (!exam) {
+      throw new BadRequestException('The exam was not found')
+    }
+
+    return exam.correctAnswerAmount
+  }
+
+  async getExamMark(examID: number) {
+    const exam = await this.userExamRepository.findOne({
+      where: {id: examID},
+      relations: ['exam', 'exam.questions']
+    })
+
+    if (!exam) {
+      throw new BadRequestException('The exam was not found')
+    }
+
+    const examCorrectAnswer = await this.getCorrectExamAnswer(examID)
+
+    return `Result: ${(examCorrectAnswer / exam.exam.questions.length) * 100}%`
   }
 
 }

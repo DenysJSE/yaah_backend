@@ -29,7 +29,12 @@ export class SubjectsService {
   }
 
   async getAllSubjects() {
-    return await this.subjectRepository.find({relations: ['exams', 'lessons']})
+    return await this.subjectRepository.find({
+      relations: ['exams', 'lessons'],
+      order: {
+        id: "ASC"
+      }
+    })
   }
 
   async getSubjectById(id: number) {
