@@ -43,6 +43,9 @@ export class LessonsService {
       throw new BadRequestException('The lesson with such title already exist!')
     }
 
+    subject.lessonsNumber += 1;
+    await this.subjectRepository.save(subject)
+
     const lesson = this.lessonRepository.create({
       ...lessonDTO,
       subject
@@ -136,8 +139,12 @@ export class LessonsService {
   async deleteLesson(id: number) {
     const lesson = await this.lessonRepository.findOne({
       where: {id},
-      relations: ['userLessons'],
+      relations: ['userLessons', 'subject'],
     })
+
+    const subject = lesson.subject
+    subject.lessonsNumber -= 1
+    await this.subjectRepository.save(subject)
 
     if (!lesson) {
       throw new BadRequestException('The subject is not found!')

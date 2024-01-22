@@ -21,6 +21,11 @@ export class RolesController {
     return this.rolesService.createRole(roleDto)
   }
 
+  @Get()
+  getAllRoles() {
+    return this.rolesService.getAllRole()
+  }
+
   @ApiOperation({summary: "Find a Role By Value"})
   @ApiResponse({status: 200, type: [RoleEntity]})
   @Roles("ADMIN")

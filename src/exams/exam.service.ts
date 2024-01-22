@@ -51,6 +51,9 @@ export class ExamService {
       throw new BadRequestException('An exam with such title already exists for this subject!');
     }
 
+    subject.examsNumber += 1;
+    await this.subjectRepository.save(subject)
+
     const exam = this.examRepository.create({
       ...CreateExamDto,
       subject,
@@ -236,12 +239,16 @@ export class ExamService {
   async deleteExam(id: number) {
     const exam = await this.examRepository.findOne({
       where: { ID: id },
-      relations: ['questions', 'questions.option', 'userExams'],
+      relations: ['questions', 'questions.option', 'userExams', 'subject'],
     });
 
     if (!exam) {
       throw new BadRequestException('Exam not found');
     }
+
+    const subject = exam.subject
+    subject.examsNumber -= 1
+    await this.subjectRepository.save(subject)
 
     const questions = exam.questions;
 

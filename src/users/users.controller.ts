@@ -52,6 +52,11 @@ export class UsersController {
     return this.usersService.getUserByID(user.id)
   }
 
+  @Get('/get_user/:id')
+  getUserByIDFromParams(@Param('id') id: number) {
+    return this.usersService.getUserByID(id)
+  }
+
   @ApiOperation({summary: "Add Role"})
   @ApiResponse({status: 201, type: [RoleEntity]})
   @Roles("ADMIN")

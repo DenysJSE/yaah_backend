@@ -32,6 +32,10 @@ export class RolesService {
 
   }
 
+  async getAllRole() {
+    return await this.roleRepository.find()
+  }
+
   async getRoleByValue(value: string) {
     const role = await this.roleRepository.findOne({
       where: {value: value.toUpperCase()}
