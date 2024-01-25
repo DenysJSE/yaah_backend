@@ -35,22 +35,15 @@ export class SubjectEntity {
     example: "10",
     description: "The amount of the lessons"
   })
-  @Column()
+  @Column({default: 0})
   lessonsNumber: number;
 
   @ApiProperty({
     example: "10",
     description: "The amount of the exams"
   })
-  @Column()
+  @Column({default: 0})
   examsNumber: number;
-
-  @ApiProperty({
-    example: "15",
-    description: "The time which student should spent to finish the subject course"
-  })
-  @Column()
-  courseDuration: number;
 
   @ApiProperty({
     type: () => ExamEntity,

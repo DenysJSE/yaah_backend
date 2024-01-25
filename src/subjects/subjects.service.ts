@@ -60,7 +60,6 @@ export class SubjectsService {
     subject.description = subjectDto.description;
     subject.lessonsNumber = subjectDto.lessonsNumber;
     subject.examsNumber = subjectDto.examsNumber;
-    subject.courseDuration = subjectDto.courseDuration;
 
     await this.subjectRepository.save(subject);
 

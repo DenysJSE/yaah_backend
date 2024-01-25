@@ -81,6 +81,26 @@ export class UsersService {
     return user
   }
 
+  async checkUserNicknameExist(userNickname: string) {
+    const users = await this.userRepository.find()
+    let existNickname = false
+    users.map(user => {
+      if (user.nickname.toLowerCase() === userNickname.toLowerCase())
+        existNickname = true
+    })
+    return existNickname
+  }
+
+  async checkEmailExist(email: string) {
+    const users = await this.userRepository.find()
+    let existEmail = false
+    users.map(user => {
+      if (user.email.toLowerCase() === email.toLowerCase())
+        existEmail = true
+    })
+    return existEmail
+  }
+
   async getAllUsers() {
     const user = await this.userRepository.find({
       relations: ['roles'],

@@ -36,6 +36,16 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
+  @Get('/check_nickname/:nickname')
+  checkUserNicknameExist(@Param('nickname') nickname: string) {
+    return this.usersService.checkUserNicknameExist(nickname)
+  }
+
+  @Get('/check_email/:email')
+  checkEmailExist(@Param('email') email: string) {
+    return this.usersService.checkEmailExist(email)
+  }
+
   @ApiOperation({summary: "Get All Users"})
   @ApiResponse({status: 200, type: [UserEntity]})
   @Roles("ADMIN")
