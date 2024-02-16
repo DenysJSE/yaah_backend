@@ -7,7 +7,7 @@ export class SubjectDto {
     example: "English Language",
     description: "The name of the subject"
   })
-  @Matches(/^[A-Za-z\s]+$/)
+  @Matches(/^[A-Za-z\s]+$/, {message: 'The name of subject must contain only letters!'})
   @IsNotEmpty()
   @Length(3)
   readonly title: string;
