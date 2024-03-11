@@ -49,6 +49,11 @@ export class LessonsController {
     return this.lessonService.getLessonById(id)
   }
 
+  @Get('get_lesson_by_id_admin/:id')
+  getLessonByIdAdmin(@Param('id') id: number) {
+    return this.lessonService.getLessonByIdAdmin(id)
+  }
+
   @ApiOperation({summary: "Update a Lesson"})
   @ApiResponse({status: 201, type: [LessonEntity]})
   @Roles("ADMIN")

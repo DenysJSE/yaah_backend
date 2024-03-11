@@ -114,6 +114,19 @@ export class LessonsService {
     return lesson
   }
 
+  async getLessonByIdAdmin(id: number) {
+    const lesson = await this.lessonRepository.findOne({
+      where: {id},
+      relations: ['subject']
+    })
+
+    if (!lesson) {
+      throw new BadRequestException(`The lesson with ID: ${id} not found!`)
+    }
+
+    return lesson
+  }
+
   /**
    * @param id - lessonID
    * @param lessonDTO - title, lessonData, subjectID
