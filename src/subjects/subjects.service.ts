@@ -83,8 +83,6 @@ export class SubjectsService {
 
     subject.title = subjectDto.title;
     subject.description = subjectDto.description;
-    subject.lessonsNumber = subjectDto.lessonsNumber;
-    subject.examsNumber = subjectDto.examsNumber;
 
     await this.subjectRepository.save(subject);
 
